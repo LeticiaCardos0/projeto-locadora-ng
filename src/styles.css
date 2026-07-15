@@ -1,3 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+/* @import "primeicons/primeicons.css"; */
+@import "@tabler/icons-webfont/dist/tabler-icons.css";
+
+@theme {
+  --color-navy: #1C2438;
+  --color-navy-light: #28324A;
+  --color-cream: #F3EEE3;
+  --color-cream-soft: #FBF8F0;
+  --color-coral: #D9603F;
+  --color-coral-soft: #FAECE7;
+  --color-coral-text: #993C1D;
+  --color-muted: #9099AD;
+}
+
+
