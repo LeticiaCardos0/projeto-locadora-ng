@@ -1,83 +1,212 @@
-<aside class="w-48 shrink-0 py-4 px-2 flex flex-col gap-1 bg-cream">
+<aside
+  [class]="collapsed() ? 'w-16' : 'w-56'"
+  class="shrink-0 py-4 px-2 flex flex-col gap-1 bg-navy min-h-full overflow-x-hidden transition-all duration-200"
+>
 
-  <a
-    routerLink="/dashboard"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
+  <!-- BOTÃO RECOLHER / EXPANDIR -->
+  <button
+    type="button"
+    (click)="toggleCollapsed()"
+    class="flex items-center gap-3 px-3 py-2 mb-2 rounded-lg text-sm text-muted hover:bg-white/5 transition"
+    [class.justify-center]="collapsed()"
   >
-    <i class="ti ti-chart-bar text-base"></i>
-    <span>Painel</span>
-  </a>
+    <i class="ti text-base" [class.ti-chevron-right]="collapsed()" [class.ti-chevron-left]="!collapsed()"></i>
+    @if (!collapsed()) {
+      <span>Recolher</span>
+    }
+  </button>
 
-  <a
-    routerLink="/locacoes"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
-  >
-    <i class="ti ti-steering-wheel text-base"></i>
-    <span>Locações</span>
-  </a>
+  <!-- ÁREA DO CLIENTE -->
+  @if (sidebarMode.mode() === 'cliente') {
+    <a
+      routerLink="/"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Home' : ''"
+    >
+      <i class="ti ti-home text-base"></i>
+      @if (!collapsed()) { <span>Home</span> }
+    </a>
 
-  <a
-    routerLink="/veiculos"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
-  >
-    <i class="ti ti-car text-base"></i>
-    <span>Veículos</span>
-  </a>
+    <a
+      routerLink="/veiculos"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Listagem de veículos' : ''"
+    >
+      <i class="ti ti-car text-base"></i>
+      @if (!collapsed()) { <span>Listagem de veículos</span> }
+    </a>
 
-  <a
-    routerLink="/clientes"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
-  >
-    <i class="ti ti-users text-base"></i>
-    <span>Clientes</span>
-  </a>
+    <a
+      routerLink="/veiculos/detalhes"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Detalhes do veículo' : ''"
+    >
+      <i class="ti ti-file-description text-base"></i>
+      @if (!collapsed()) { <span>Detalhes do veículo</span> }
+    </a>
 
-  <a
-    routerLink="/categorias"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
-  >
-    <i class="ti ti-tag text-base"></i>
-    <span>Categorias</span>
-  </a>
+    <a
+      routerLink="/reserva"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Reserva' : ''"
+    >
+      <i class="ti ti-calendar-plus text-base"></i>
+      @if (!collapsed()) { <span>Reserva</span> }
+    </a>
 
-  <a
-    routerLink="/seguros"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
-  >
-    <i class="ti ti-shield-check text-base"></i>
-    <span>Seguros</span>
-  </a>
+    <a
+      routerLink="/login"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Login/Cadastro' : ''"
+    >
+      <i class="ti ti-login text-base"></i>
+      @if (!collapsed()) { <span>Login/Cadastro</span> }
+    </a>
 
-  <a
-    routerLink="/pagamentos"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
-  >
-    <i class="ti ti-credit-card text-base"></i>
-    <span>Pagamentos</span>
-  </a>
+    <a
+      routerLink="/minhas-reservas"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Minhas reservas' : ''"
+    >
+      <i class="ti ti-calendar-check text-base"></i>
+      @if (!collapsed()) { <span>Minhas reservas</span> }
+    </a>
 
-  <a
-    routerLink="/conta"
-    routerLinkActive="bg-coral-soft text-coral-text font-medium"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="mt-auto flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-black/5 transition"
+    <a
+      routerLink="/perfil"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Perfil' : ''"
+    >
+      <i class="ti ti-user-circle text-base"></i>
+      @if (!collapsed()) { <span>Perfil</span> }
+    </a>
+  }
+
+  <!-- ÁREA ADMINISTRATIVA -->
+  @if (sidebarMode.mode() === 'admin') {
+    <a
+      routerLink="/admin/dashboard"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Dashboard' : ''"
+    >
+      <i class="ti ti-chart-bar text-base"></i>
+      @if (!collapsed()) { <span>Dashboard</span> }
+    </a>
+
+    <a
+      routerLink="/admin/veiculos"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'CRUD de veículos' : ''"
+    >
+      <i class="ti ti-car text-base"></i>
+      @if (!collapsed()) { <span>CRUD de veículos</span> }
+    </a>
+
+    <a
+      routerLink="/admin/clientes"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'CRUD de clientes' : ''"
+    >
+      <i class="ti ti-users text-base"></i>
+      @if (!collapsed()) { <span>CRUD de clientes</span> }
+    </a>
+
+    <a
+      routerLink="/admin/reservas"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Gerenciamento de reservas' : ''"
+    >
+      <i class="ti ti-calendar-event text-base"></i>
+      @if (!collapsed()) { <span>Gerenciamento de reservas</span> }
+    </a>
+
+    <a
+      routerLink="/admin/categorias"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Categorias' : ''"
+    >
+      <i class="ti ti-tag text-base"></i>
+      @if (!collapsed()) { <span>Categorias</span> }
+    </a>
+
+    <a
+      routerLink="/admin/marcas"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Marcas' : ''"
+    >
+      <i class="ti ti-tags text-base"></i>
+      @if (!collapsed()) { <span>Marcas</span> }
+    </a>
+
+    <a
+      routerLink="/admin/manutencoes"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Manutenções' : ''"
+    >
+      <i class="ti ti-tool text-base"></i>
+      @if (!collapsed()) { <span>Manutenções</span> }
+    </a>
+
+    <a
+      routerLink="/admin/usuarios"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Usuários administradores' : ''"
+    >
+      <i class="ti ti-user-shield text-base"></i>
+      @if (!collapsed()) { <span>Usuários administradores</span> }
+    </a>
+
+    <a
+      routerLink="/admin/relatorios"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Relatórios' : ''"
+    >
+      <i class="ti ti-report text-base"></i>
+      @if (!collapsed()) { <span>Relatórios</span> }
+    </a>
+
+    <a
+      routerLink="/admin/configuracoes"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Configurações' : ''"
+    >
+      <i class="ti ti-settings text-base"></i>
+      @if (!collapsed()) { <span>Configurações</span> }
+    </a>
+  }
+
+  <!-- BOTÃO DE TROCA DE ÁREA -->
+  <button
+    type="button"
+    (click)="toggleMode()"
+    class="mt-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-coral border border-coral/40 bg-coral/10 hover:bg-coral/20 transition"
+    [class.justify-center]="collapsed()"
+    [title]="collapsed() ? (sidebarMode.mode() === 'cliente' ? 'Painel Admin' : 'Área do Cliente') : ''"
   >
-    <i class="ti ti-settings text-base"></i>
-    <span>Conta</span>
-  </a>
+    @if (sidebarMode.mode() === 'cliente') {
+      <i class="ti ti-tools text-base"></i>
+      @if (!collapsed()) { <span>Painel Admin</span> }
+    } @else {
+      <i class="ti ti-user text-base"></i>
+      @if (!collapsed()) { <span>Área do Cliente</span> }
+    }
+  </button>
 
 </aside>

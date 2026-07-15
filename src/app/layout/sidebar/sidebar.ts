@@ -1,12 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
-interface NavItem {
-  label: string;
-  icon: string;
-  route: string;
-}
+import { SidebarModeService } from '../sidebar-modo/sidebar-modo';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,13 +10,15 @@ interface NavItem {
   templateUrl: './sidebar.html',
 })
 export class SidebarComponent {
-  navItems: NavItem[] = [
-    { label: 'Painel', icon: 'ti-chart-bar', route: '/dashboard' },
-    { label: 'Locações', icon: 'ti-steering-wheel', route: '/locacoes' },
-    { label: 'Veículos', icon: 'ti-car', route: '/veiculos' },
-    { label: 'Clientes', icon: 'ti-users', route: '/clientes' },
-    { label: 'Categorias', icon: 'ti-tag', route: '/categorias' },
-    { label: 'Seguros', icon: 'ti-shield-check', route: '/seguros' },
-    { label: 'Pagamentos', icon: 'ti-credit-card', route: '/pagamentos' },
-  ];
+  sidebarMode = inject(SidebarModeService);
+
+  collapsed = signal(false);
+ 
+  toggleMode(): void {
+    this.sidebarMode.toggle();
+  }
+ 
+  toggleCollapsed(): void {
+    this.collapsed.update((value) => !value);
+  }
 }
