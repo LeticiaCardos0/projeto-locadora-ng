@@ -1,17 +1,15 @@
-
 @import 'tailwindcss';
-/* @import "primeicons/primeicons.css"; */
-@import "@tabler/icons-webfont/dist/tabler-icons.css";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
+@import '@tabler/icons-webfont/dist/tabler-icons.css';
+
+/* Habilita o modo escuro controlado por classe (.dark no <html>) no Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-navy: #1C2438;
-  --color-navy-light: #28324A;
-  --color-cream: #F3EEE3;
-  --color-cream-soft: #FBF8F0;
-  --color-coral: #D9603F;
-  --color-coral-soft: #FAECE7;
-  --color-coral-text: #993C1D;
-  --color-muted: #9099AD;
+  --font-montserrat: "Montserrat", sans-serif;
 }
 
-
+html, body {
+  height: 100%;
+  margin: 0;
+}

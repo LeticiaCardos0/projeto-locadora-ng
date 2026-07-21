@@ -1,13 +1,14 @@
 <aside
   [class]="collapsed() ? 'w-16' : 'w-56'"
-  class="shrink-0 py-4 px-2 flex flex-col gap-1 bg-navy min-h-full overflow-x-hidden transition-all duration-200"
+  class="shrink-0 py-4 px-2 flex flex-col gap-1 bg-white dark:bg-black border-r border-black/10 dark:border-white/10 h-full overflow-hidden transition-all duration-200"
 >
 
+  <nav class="flex-1 min-h-0 overflow-y-auto flex flex-col gap-1">
   <!-- BOTÃO RECOLHER / EXPANDIR -->
   <button
     type="button"
     (click)="toggleCollapsed()"
-    class="flex items-center gap-3 px-3 py-2 mb-2 rounded-lg text-sm text-muted hover:bg-white/5 transition"
+    class="cursor-pointer flex items-center gap-3 px-3 py-2 mb-2 rounded-lg text-sm text-black/50 dark:text-white/50 hover:bg-black/5 dark:hover:bg-white/10 transition"
     [class.justify-center]="collapsed()"
   >
     <i class="ti text-base" [class.ti-chevron-right]="collapsed()" [class.ti-chevron-left]="!collapsed()"></i>
@@ -20,7 +21,7 @@
   @if (sidebarMode.mode() === 'cliente') {
     <a
       routerLink="/"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Home' : ''"
     >
@@ -30,47 +31,26 @@
 
     <a
       routerLink="/veiculos"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Listagem de veículos' : ''"
     >
       <i class="ti ti-car text-base"></i>
-      @if (!collapsed()) { <span>Listagem de veículos</span> }
+      @if (!collapsed()) { <span>Veículos</span> }
     </a>
-
     <a
-      routerLink="/veiculos/detalhes"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      routerLink="/planos"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Detalhes do veículo' : ''"
+      [title]="collapsed() ? 'Perfil' : ''"
     >
-      <i class="ti ti-file-description text-base"></i>
-      @if (!collapsed()) { <span>Detalhes do veículo</span> }
-    </a>
-
-    <a
-      routerLink="/reserva"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
-      [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Reserva' : ''"
-    >
-      <i class="ti ti-calendar-plus text-base"></i>
-      @if (!collapsed()) { <span>Reserva</span> }
-    </a>
-
-    <a
-      routerLink="/login"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
-      [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Login/Cadastro' : ''"
-    >
-      <i class="ti ti-login text-base"></i>
-      @if (!collapsed()) { <span>Login/Cadastro</span> }
+      <i class="ti ti-gift text-base"></i>
+      @if (!collapsed()) { <span>Planos</span> }
     </a>
 
     <a
       routerLink="/minhas-reservas"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Minhas reservas' : ''"
     >
@@ -78,22 +58,13 @@
       @if (!collapsed()) { <span>Minhas reservas</span> }
     </a>
 
-    <a
-      routerLink="/perfil"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
-      [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Perfil' : ''"
-    >
-      <i class="ti ti-user-circle text-base"></i>
-      @if (!collapsed()) { <span>Perfil</span> }
-    </a>
   }
 
   <!-- ÁREA ADMINISTRATIVA -->
   @if (sidebarMode.mode() === 'admin') {
     <a
       routerLink="/admin/dashboard"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Dashboard' : ''"
     >
@@ -103,27 +74,27 @@
 
     <a
       routerLink="/admin/veiculos"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'CRUD de veículos' : ''"
     >
       <i class="ti ti-car text-base"></i>
-      @if (!collapsed()) { <span>CRUD de veículos</span> }
+      @if (!collapsed()) { <span>Veículos</span> }
     </a>
 
     <a
       routerLink="/admin/clientes"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'CRUD de clientes' : ''"
     >
       <i class="ti ti-users text-base"></i>
-      @if (!collapsed()) { <span>CRUD de clientes</span> }
+      @if (!collapsed()) { <span>Clientes</span> }
     </a>
 
     <a
       routerLink="/admin/reservas"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Gerenciamento de reservas' : ''"
     >
@@ -133,7 +104,7 @@
 
     <a
       routerLink="/admin/categorias"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Categorias' : ''"
     >
@@ -143,7 +114,7 @@
 
     <a
       routerLink="/admin/marcas"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Marcas' : ''"
     >
@@ -153,27 +124,16 @@
 
     <a
       routerLink="/admin/manutencoes"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Manutenções' : ''"
     >
       <i class="ti ti-tool text-base"></i>
       @if (!collapsed()) { <span>Manutenções</span> }
     </a>
-
-    <a
-      routerLink="/admin/usuarios"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
-      [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Usuários administradores' : ''"
-    >
-      <i class="ti ti-user-shield text-base"></i>
-      @if (!collapsed()) { <span>Usuários administradores</span> }
-    </a>
-
     <a
       routerLink="/admin/relatorios"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Relatórios' : ''"
     >
@@ -181,23 +141,15 @@
       @if (!collapsed()) { <span>Relatórios</span> }
     </a>
 
-    <a
-      routerLink="/admin/configuracoes"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-cream/80 hover:bg-white/5 transition"
-      [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Configurações' : ''"
-    >
-      <i class="ti ti-settings text-base"></i>
-      @if (!collapsed()) { <span>Configurações</span> }
-    </a>
   }
 
-  <!-- BOTÃO DE TROCA DE ÁREA -->
+  </nav>
+
+  <!-- BOTÃO DE TROCA DE ÁREA (fixo embaixo) -->
   <button
     type="button"
     (click)="toggleMode()"
-    class="mt-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-coral border border-coral/40 bg-coral/10 hover:bg-coral/20 transition"
-    [class.justify-center]="collapsed()"
+    class="cursor-pointer sticky bottom-0 shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 mt-2 rounded-lg text-sm font-medium text-center text-black dark:text-white border border-black/30 dark:border-white/30 bg-white dark:bg-black hover:bg-black/10 dark:hover:bg-white/20 transition"
     [title]="collapsed() ? (sidebarMode.mode() === 'cliente' ? 'Painel Admin' : 'Área do Cliente') : ''"
   >
     @if (sidebarMode.mode() === 'cliente') {

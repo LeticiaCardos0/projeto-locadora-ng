@@ -1,10 +1,10 @@
-<div class="flex flex-col min-h-screen bg-cream">
+<div class="grid grid-rows-[auto_1fr_auto] h-screen overflow-hidden bg-white dark:bg-black">
   <app-topbar></app-topbar>
 
-  <div class="flex flex-1">
+  <div class="grid grid-cols-[auto_1fr] overflow-hidden">
     <app-sidebar></app-sidebar>
 
-    <main class="flex-1 p-5">
+    <main class="overflow-y-auto p-5">
       <router-outlet></router-outlet>
     </main>
   </div>

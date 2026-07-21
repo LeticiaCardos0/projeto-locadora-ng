@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TemaService } from '../../tema/tema';
 
 @Component({
   selector: 'app-topbar',
@@ -7,4 +8,10 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './topbar.html',
 })
-export class TopbarComponent {}
+export class TopbarComponent {
+  tema = inject(TemaService);
+
+  toggleTema(): void {
+    this.tema.toggle();
+  }
+}
