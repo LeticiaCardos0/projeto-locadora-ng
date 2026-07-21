@@ -76,7 +76,7 @@
       routerLink="/admin/veiculos"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'CRUD de veículos' : ''"
+      [title]="collapsed() ? 'Veículos' : ''"
     >
       <i class="ti ti-car text-base"></i>
       @if (!collapsed()) { <span>Veículos</span> }
@@ -86,20 +86,10 @@
       routerLink="/admin/clientes"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
       [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'CRUD de clientes' : ''"
+      [title]="collapsed() ? 'Clientes' : ''"
     >
       <i class="ti ti-users text-base"></i>
       @if (!collapsed()) { <span>Clientes</span> }
-    </a>
-
-    <a
-      routerLink="/admin/reservas"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
-      [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Gerenciamento de reservas' : ''"
-    >
-      <i class="ti ti-calendar-event text-base"></i>
-      @if (!collapsed()) { <span>Gerenciamento de reservas</span> }
     </a>
 
     <a
@@ -110,16 +100,6 @@
     >
       <i class="ti ti-tag text-base"></i>
       @if (!collapsed()) { <span>Categorias</span> }
-    </a>
-
-    <a
-      routerLink="/admin/marcas"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
-      [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Marcas' : ''"
-    >
-      <i class="ti ti-tags text-base"></i>
-      @if (!collapsed()) { <span>Marcas</span> }
     </a>
 
     <a
