@@ -1,0 +1,211 @@
+<main class="p-6 space-y-6 relative">
+
+  <!-- ===================== TELA DE LISTA (sempre visível) ===================== -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Categorias</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Tipos de veículo e valor de diária de referência</p>
+    </div>
+    <button
+      (click)="novo()"
+      class="cursor-pointer hover:bg-[#C2542F] bg-[#D9603F] inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+    >
+      <i class="ti ti-plus"></i>
+      Nova
+    </button>
+  </div>
+
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+      <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+        <i class="ti ti-tag text-[#D9603F]"></i>
+        Categorias cadastradas
+      </h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm table-fixed">
+        <colgroup>
+          <col class="w-[35%]" />
+          <col class="w-[20%]" />
+          <col class="w-[20%]" />
+          <col class="w-[25%]" />
+        </colgroup>
+        <thead>
+          <tr class="text-center text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-white/5">
+            <th class="px-5 py-3 font-medium truncate">Nome</th>
+            <th class="px-5 py-3 font-medium truncate">Diária de referência</th>
+            <th class="px-5 py-3 font-medium truncate">Veículos vinculados</th>
+            <th class="px-5 py-3 font-medium truncate">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of categorias; track c.id) {
+            <tr class="text-center border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+              <td class="px-5 py-3 text-gray-900 dark:text-white font-medium truncate">{{ c.nome }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ formatarValor(c.valorDiaria) }}</td>
+              <td class="px-5 py-3">
+                <button
+                  (click)="verVeiculos(c.id)"
+                  class="cursor-pointer inline-flex items-center justify-center min-w-[72px] gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-[#D9603F]/10 text-[#D9603F] hover:bg-[#D9603F]/20 transition-colors"
+                  title="Ver veículos desta categoria"
+                >
+                  <i class="ti ti-car"></i>
+                  {{ qtdVeiculos(c.id) }}
+                </button>
+              </td>
+              <td class="px-5 py-3">
+                <div class="flex items-center justify-center gap-2">
+                  <button
+                    (click)="editar(c.id)"
+                    class="cursor-pointer rounded-md p-2 text-gray-500 hover:text-[#D9603F] transition-colors"
+                  >
+                    <i class="ti ti-edit"></i>
+                  </button>
+                  <button
+                    (click)="excluir(c.id)"
+                    class="cursor-pointer rounded-md p-2 text-gray-500 hover:text-red-500 transition-colors"
+                  >
+                    <i class="ti ti-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="px-5 py-10 text-center text-gray-400 dark:text-gray-500">
+                Nenhuma categoria cadastrada.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL DE CADASTRO/EDIÇÃO ===================== -->
+  @if (mostrarForm) {
+    <div
+      class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      (click)="fecharForm()"
+    >
+      <div
+        class="w-full max-w-md rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+          <div>
+            <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+              <i class="ti ti-tag text-[#D9603F]"></i>
+              {{ editando ? 'Edição de categoria' : 'Nova categoria' }}
+            </h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {{ editando ? 'Atualize os dados da categoria' : 'Preencha os dados da categoria' }}
+            </p>
+          </div>
+          <button
+            (click)="fecharForm()"
+            class="cursor-pointer rounded-md p-2 text-gray-400 transition duration-200 hover:rotate-90"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+        <div class="px-5 py-5 space-y-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome *</label>
+            <input
+              [(ngModel)]="categoriaAtual.nome"
+              name="nome"
+              placeholder="Ex: SUV, Sedan, Econômico..."
+              class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+            />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Valor da diária de referência (R$) *</label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              [(ngModel)]="categoriaAtual.valorDiaria"
+              name="valorDiaria"
+              placeholder="0,00"
+              class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 px-5 py-4 border-t border-gray-200 dark:border-white/5">
+          <button
+            (click)="fecharForm()"
+            class="cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="salvar()"
+            class="cursor-pointer hover:bg-[#C2542F] bg-[#D9603F] rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+          >
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ===================== MODAL DE VEÍCULOS VINCULADOS ===================== -->
+  @if (mostrarVeiculos) {
+    <div
+      class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      (click)="fecharVeiculos()"
+    >
+      <div
+        class="w-full max-w-2xl rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+          <div>
+            <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+              <i class="ti ti-car text-[#D9603F]"></i>
+              Veículos vinculados
+            </h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ categoriaSelecionada?.nome }}</p>
+          </div>
+          <button
+            (click)="fecharVeiculos()"
+            class="cursor-pointer rounded-md p-2 text-gray-400 transition duration-200 hover:rotate-90"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+        <div class="px-5 py-5 max-h-96 overflow-y-auto">
+          @if (veiculosDaCategoria.length > 0) {
+            <div class="space-y-3">
+              @for (v of veiculosDaCategoria; track v.id) {
+                <div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/10 px-4 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ v.modelo }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ v.placa }}</p>
+                  </div>
+                  <span
+                    class="inline-flex items-center justify-center min-w-[72px] rounded-full px-2.5 py-1 text-xs font-medium"
+                    [class.bg-green-500/10]="v.status === 'disponivel'"
+                    [class.text-green-500]="v.status === 'disponivel'"
+                    [class.bg-red-500/10]="v.status === 'alugado'"
+                    [class.text-red-500]="v.status === 'alugado'"
+                  >
+                    {{ v.status === 'disponivel' ? 'Disponivel' : 'Alugado' }}
+                  </span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="text-center text-gray-400 dark:text-gray-500 py-10">Nenhum veículo vinculado a esta categoria.</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+</main>

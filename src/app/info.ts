@@ -17,11 +17,11 @@ export class InfoService {
     if (existing && JSON.parse(existing).length > 0) return;
 
     const categorias = [
-      { id: 'cat-1', nome: 'Econômico' },
-      { id: 'cat-2', nome: 'Sedan' },
-      { id: 'cat-3', nome: 'SUV' },
-      { id: 'cat-4', nome: 'Utilitário' },
-      { id: 'cat-5', nome: 'Esportivo' },
+      { id: 'cat-1', nome: 'Econômico', valorDiaria: 89.9 },
+      { id: 'cat-2', nome: 'Sedan', valorDiaria: 129.9 },
+      { id: 'cat-3', nome: 'SUV', valorDiaria: 179.9 },
+      { id: 'cat-4', nome: 'Utilitário', valorDiaria: 199.9 },
+      { id: 'cat-5', nome: 'Esportivo', valorDiaria: 349.9 },
     ];
     localStorage.setItem(CATEGORIAS_KEY, JSON.stringify(categorias));
   }
