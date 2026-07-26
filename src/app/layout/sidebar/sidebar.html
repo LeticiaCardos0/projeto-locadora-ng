@@ -2,6 +2,11 @@
   [class]="collapsed() ? 'w-16' : 'w-56'"
   class="shrink-0 py-4 px-2 flex flex-col gap-1 bg-white dark:bg-black border-r border-black/10 dark:border-white/10 h-full overflow-hidden transition-all duration-200"
 >
+  <!--
+    Safelist para o Tailwind reconhecer as classes montadas dinamicamente no [class] dos links abaixo
+    (o scanner estático não lê strings concatenadas em runtime):
+    flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F] text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition
+  -->
 
   <nav class="flex-1 min-h-0 overflow-y-auto flex flex-col gap-1">
   <!-- BOTÃO RECOLHER / EXPANDIR -->
@@ -21,106 +26,162 @@
   @if (sidebarMode.mode() === 'cliente') {
     <a
       routerLink="/"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla1="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [class]="(rla1.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Home' : ''"
-    >
+      >
       <i class="ti ti-home text-base"></i>
       @if (!collapsed()) { <span>Home</span> }
     </a>
 
     <a
       routerLink="/veiculos"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla2="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla2.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Listagem de veículos' : ''"
-    >
+      >
       <i class="ti ti-car text-base"></i>
       @if (!collapsed()) { <span>Veículos</span> }
     </a>
+
     <a
       routerLink="/planos"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla3="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla3.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Perfil' : ''"
-    >
+      [title]="collapsed() ? 'Planos' : ''"
+      >
       <i class="ti ti-gift text-base"></i>
       @if (!collapsed()) { <span>Planos</span> }
     </a>
 
     <a
       routerLink="/minhas-reservas"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla4="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla4.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Minhas reservas' : ''"
-    >
+      >
       <i class="ti ti-calendar-check text-base"></i>
       @if (!collapsed()) { <span>Minhas reservas</span> }
     </a>
-
   }
 
   <!-- ÁREA ADMINISTRATIVA -->
   @if (sidebarMode.mode() === 'admin') {
     <a
       routerLink="/admin/dashboard"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla5="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla5.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Dashboard' : ''"
-    >
+      >
       <i class="ti ti-chart-bar text-base"></i>
       @if (!collapsed()) { <span>Dashboard</span> }
     </a>
 
     <a
       routerLink="/admin/veiculos"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla6="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla6.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Veículos' : ''"
-    >
+      >
       <i class="ti ti-car text-base"></i>
       @if (!collapsed()) { <span>Veículos</span> }
     </a>
 
     <a
       routerLink="/admin/clientes"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla7="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla7.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Clientes' : ''"
-    >
+      >
       <i class="ti ti-users text-base"></i>
       @if (!collapsed()) { <span>Clientes</span> }
     </a>
 
     <a
-      routerLink="/admin/categorias"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLink="/admin/reservas"
+      routerLinkActive
+      #rla8="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla8.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
-      [title]="collapsed() ? 'Categorias' : ''"
-    >
+      [title]="collapsed() ? 'Reservas' : ''"
+      >
+      <i class="ti ti-calendar-event text-base"></i>
+      @if (!collapsed()) { <span>Reservas</span> }
+    </a>
+
+    <a
+      routerLink="/admin/financeiro"
+      routerLinkActive
+      #rla9="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla9.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Financeiro' : ''"
+      >
+      <i class="ti ti-cash text-base"></i>
+      @if (!collapsed()) { <span>Financeiro</span> }
+    </a>
+
+    <a
+      routerLink="/admin/categorias"
+      routerLinkActive
+      #rla10="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla10.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
+      [class.justify-center]="collapsed()"
+      [title]="collapsed() ? 'Categorias do contrato' : ''"
+      >
       <i class="ti ti-tag text-base"></i>
-      @if (!collapsed()) { <span>Categorias</span> }
+      @if (!collapsed()) { <span>Categorias do contrato</span> }
     </a>
 
     <a
       routerLink="/admin/manutencoes"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla11="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla11.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Manutenções' : ''"
-    >
+      >
       <i class="ti ti-tool text-base"></i>
       @if (!collapsed()) { <span>Manutenções</span> }
     </a>
+
     <a
       routerLink="/admin/relatorios"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      routerLinkActive
+      #rla12="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: false }"
+      [class]="(rla12.isActive ? 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#D9603F]/10 text-[#D9603F]' : 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10') + ' transition'"
       [class.justify-center]="collapsed()"
       [title]="collapsed() ? 'Relatórios' : ''"
-    >
+      >
       <i class="ti ti-report text-base"></i>
       @if (!collapsed()) { <span>Relatórios</span> }
     </a>
-
   }
 
   </nav>

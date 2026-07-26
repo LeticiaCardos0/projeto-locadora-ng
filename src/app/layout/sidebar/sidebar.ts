@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { SidebarModeService } from '../sidebar-modo/sidebar-modo';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, RouterLinkActive,RouterLink],
   templateUrl: './sidebar.html',
 })
 export class SidebarComponent {

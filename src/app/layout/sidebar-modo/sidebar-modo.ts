@@ -4,7 +4,7 @@ export type SidebarModo = 'cliente' | 'admin';
 
 @Injectable({ providedIn: 'root' })
 export class SidebarModeService {
-  mode = signal<SidebarModo>('cliente');
+  mode = signal<SidebarModo>('admin');
 
   toggle(): void {
     this.mode.update((current) => (current === 'cliente' ? 'admin' : 'cliente'));

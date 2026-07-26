@@ -1,0 +1,320 @@
+<main class="p-6 space-y-6 relative">
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Reservas</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Gerenciamento de locações</p>
+    </div>
+    <button
+      (click)="novo()"
+      class="cursor-pointer hover:bg-[#C2542F] bg-[#D9603F] inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+    >
+      <i class="ti ti-plus"></i>
+      Nova reserva
+    </button>
+  </div>
+
+  <!-- ===================== FILTROS ===================== -->
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm px-5 py-4">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+        <select
+          [(ngModel)]="filtroStatus"
+          name="filtroStatus"
+          class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        >
+          <option value="">Todos</option>
+          <option value="pendente">Pendente</option>
+          <option value="confirmada">Confirmada</option>
+          <option value="em_andamento">Em andamento</option>
+          <option value="finalizada">Finalizada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">De</label>
+        <input
+          type="date"
+          [(ngModel)]="filtroDataInicio"
+          name="filtroDataInicio"
+          class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Até</label>
+        <input
+          type="date"
+          [(ngModel)]="filtroDataFim"
+          name="filtroDataFim"
+          class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        />
+      </div>
+
+      <div class="flex items-end">
+        <button
+          (click)="limparFiltros()"
+          class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-white/10 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+        >
+          <i class="ti ti-filter-off"></i>
+          Limpar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TABELA ===================== -->
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+      <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+        <i class="ti ti-calendar-event text-[#D9603F]"></i>
+        Reservas cadastradas
+      </h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm table-fixed">
+        <colgroup>
+          <col class="w-[18%]" />
+          <col class="w-[18%]" />
+          <col class="w-[13%]" />
+          <col class="w-[13%]" />
+          <col class="w-[16%]" />
+          <col class="w-[22%]" />
+        </colgroup>
+        <thead>
+          <tr class="text-center text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-white/5">
+            <th class="px-5 py-3 font-medium truncate">Cliente</th>
+            <th class="px-5 py-3 font-medium truncate">Veículo</th>
+            <th class="px-5 py-3 font-medium truncate">Início</th>
+            <th class="px-5 py-3 font-medium truncate">Fim</th>
+            <th class="px-5 py-3 font-medium truncate">Status</th>
+            <th class="px-5 py-3 font-medium truncate">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of reservasFiltradas(); track r.id) {
+            <tr class="text-center border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+              <td class="px-5 py-3 text-gray-900 dark:text-white font-medium truncate">{{ r.clienteNome }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ r.veiculoModelo }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ r.dataInicio }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ r.dataFim }}</td>
+              <td class="px-5 py-3">
+                <span
+                  class="inline-flex items-center justify-center min-w-[100px] rounded-full px-2.5 py-1 text-xs font-medium"
+                  [class.bg-yellow-500/10]="r.status === 'pendente'"
+                  [class.text-yellow-600]="r.status === 'pendente'"
+                  [class.bg-blue-500/10]="r.status === 'confirmada'"
+                  [class.text-blue-500]="r.status === 'confirmada'"
+                  [class.bg-[#D9603F]/10]="r.status === 'em_andamento'"
+                  [class.text-[#D9603F]]="r.status === 'em_andamento'"
+                  [class.bg-green-500/10]="r.status === 'finalizada'"
+                  [class.text-green-500]="r.status === 'finalizada'"
+                  [class.bg-red-500/10]="r.status === 'cancelada'"
+                  [class.text-red-500]="r.status === 'cancelada'"
+                >
+                  {{ statusLabel(r.status) }}
+                </span>
+              </td>
+              <td class="px-5 py-3">
+                <div class="flex items-center justify-center gap-2">
+                  @if (r.status === 'pendente') {
+                    <button
+                      (click)="confirmar(r.id)"
+                      class="cursor-pointer rounded-md p-2 text-gray-500 hover:text-green-500 transition-colors"
+                      title="Confirmar reserva"
+                    >
+                      <i class="ti ti-check"></i>
+                    </button>
+                  }
+                  @if (r.status === 'pendente' || r.status === 'confirmada') {
+                    <button
+                      (click)="cancelar(r.id)"
+                      class="cursor-pointer rounded-md p-2 text-gray-500 hover:text-red-500 transition-colors"
+                      title="Cancelar reserva"
+                    >
+                      <i class="ti ti-x"></i>
+                    </button>
+                  }
+                  <button
+                    (click)="editar(r.id)"
+                    class="cursor-pointer rounded-md p-2 text-gray-500 hover:text-[#D9603F] transition-colors"
+                    title="Editar"
+                  >
+                    <i class="ti ti-edit"></i>
+                  </button>
+                  <button
+                    (click)="excluir(r.id)"
+                    class="cursor-pointer rounded-md p-2 text-gray-500 hover:text-red-500 transition-colors"
+                    title="Excluir"
+                  >
+                    <i class="ti ti-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="px-5 py-10 text-center text-gray-400 dark:text-gray-500">
+                Nenhuma reserva encontrada.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL DE CADASTRO/EDIÇÃO ===================== -->
+  @if (mostrarForm) {
+    <div
+      class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      (click)="fecharForm()"
+    >
+      <div
+        class="w-full max-w-2xl rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+          <div>
+            <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+              <i class="ti ti-calendar-event text-[#D9603F]"></i>
+              {{ editando ? 'Edição de reserva' : 'Nova reserva' }}
+            </h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {{ editando ? 'Atualize os dados da reserva' : 'Preencha os dados da reserva' }}
+            </p>
+          </div>
+          <button
+            (click)="fecharForm()"
+            class="cursor-pointer rounded-md p-2 text-gray-400 transition duration-200 hover:rotate-90"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+        <div class="px-5 py-5 space-y-5">
+          <!-- CLIENTE -->
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Cliente *</label>
+            <select
+              [(ngModel)]="reservaAtual.clienteId"
+              name="clienteId"
+              (ngModelChange)="onClienteSelecionado($event)"
+              class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+            >
+              <option value="">Selecione um cliente cadastrado</option>
+              @for (c of clientes; track c.id) {
+                <option [value]="c.id">{{ c.nome }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- INFOS PUXADAS AUTOMATICAMENTE DO CLIENTE -->
+          @if (clienteSelecionadoInfo) {
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] px-4 py-3">
+              <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">E-mail</p>
+                <p class="text-sm text-gray-900 dark:text-white">{{ clienteSelecionadoInfo.email }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Telefone</p>
+                <p class="text-sm text-gray-900 dark:text-white">{{ clienteSelecionadoInfo.telefone || '-' }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- CATEGORIA + VEÍCULO -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Categoria do contrato</label>
+              <select
+                [(ngModel)]="categoriaFiltro"
+                name="categoriaFiltro"
+                (ngModelChange)="onCategoriaAlterada()"
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+              >
+                <option value="">Todas as categorias</option>
+                @for (cat of categorias; track cat.id) {
+                  <option [value]="cat.id">{{ cat.nome }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Veículo disponível *</label>
+              <select
+                [(ngModel)]="reservaAtual.veiculoId"
+                name="veiculoId"
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+              >
+                <option value="">Selecione</option>
+                @for (v of veiculosDisponiveis(); track v.id) {
+                  <option [value]="v.id">{{ v.modelo }} ({{ v.ano }})</option>
+                }
+                @empty {
+                  <option value="" disabled>Nenhum veículo disponível nessa categoria</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- DATAS + STATUS -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data início *</label>
+              <input
+                type="date"
+                [(ngModel)]="reservaAtual.dataInicio"
+                name="dataInicio"
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data fim *</label>
+              <input
+                type="date"
+                [(ngModel)]="reservaAtual.dataFim"
+                name="dataFim"
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+              <select
+                [(ngModel)]="reservaAtual.status"
+                name="status"
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+              >
+                <option value="pendente">Pendente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="em_andamento">Em andamento</option>
+                <option value="finalizada">Finalizada</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 px-5 py-4 border-t border-gray-200 dark:border-white/5">
+          <button
+            (click)="fecharForm()"
+            class="cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="salvar()"
+            class="cursor-pointer hover:bg-[#C2542F] bg-[#D9603F] rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+          >
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</main>

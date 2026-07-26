@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { TopbarComponent } from './layout/topbar/topbar';
 import { FooterComponent } from './layout/footer/footer';
 import { SidebarComponent } from './layout/sidebar/sidebar';
+import { InfoService } from './info';
 
 @Component({
   selector: 'app-root',
@@ -12,4 +13,8 @@ import { SidebarComponent } from './layout/sidebar/sidebar';
 })
 export class App {
   protected readonly title = signal('trabalho-locadora-ng');
+
+  constructor() {
+    inject(InfoService).carregarInformacoes();
+  }
 }

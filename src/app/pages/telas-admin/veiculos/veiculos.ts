@@ -28,11 +28,7 @@ const STORAGE_KEY = 'veiculos';
 })
 export class VeiculosComponent {
   veiculos: Veiculo[] = [];
-  categorias: Categoria[] = [
-    { id: '1', nome: 'Hatch' },
-    { id: '2', nome: 'Sedan' },
-    { id: '3', nome: 'SUV' },
-  ];
+  categorias: Categoria[] = [];
 
   mostrarForm = false;
   editando = false;
@@ -40,6 +36,7 @@ export class VeiculosComponent {
 
   constructor() {
     this.carregar();
+    this.carregarCategorias();
   }
 
   private veiculoVazio(): Veiculo {
@@ -58,6 +55,11 @@ export class VeiculosComponent {
   private carregar(): void {
     const raw = localStorage.getItem(STORAGE_KEY);
     this.veiculos = raw ? JSON.parse(raw) : [];
+  }
+
+  private carregarCategorias(): void {
+    const raw = localStorage.getItem('categorias');
+    this.categorias = raw ? JSON.parse(raw) : [];
   }
 
   private salvarNoStorage(): void {
