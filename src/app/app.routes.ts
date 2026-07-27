@@ -6,6 +6,8 @@ import { ReservasComponent } from './pages/telas-admin/reservas/reservas';
 import { CategoriasComponent } from './pages/telas-admin/categorias/categorias';
 import { FinanceiroComponent } from './pages/telas-admin/financeiro/financeiro';
 import { ManutencoesComponent } from './pages/telas-admin/manutencoes/manutencoes';
+import { DashboardComponent } from './pages/telas-admin/dashboard/dashboard';
+import { DashboardFinanceiroComponent } from './pages/telas-admin/financeiro/dashboard-financeiro/dashboard-financeiro';
 
 export const routes: Routes = [
     
@@ -16,5 +18,6 @@ export const routes: Routes = [
     { path: 'admin/categorias', component: CategoriasComponent },
     { path: 'admin/financeiro', component: FinanceiroComponent },
     { path: 'admin/manutencoes', component: ManutencoesComponent },
-
+    { path: 'admin/dashboard', component: DashboardComponent },
+    { path: 'admin/financeiro/dashboard', component: DashboardFinanceiroComponent },
 ];

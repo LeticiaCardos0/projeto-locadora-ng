@@ -1,0 +1,228 @@
+<main class="p-6 space-y-6 relative">
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Visão geral da locadora</p>
+    </div>
+    <a
+      routerLink="/admin/financeiro/dashboard"
+      class="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-white/10 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+    >
+      <i class="ti ti-chart-bar"></i>
+      Ver dashboard financeiro
+    </a>
+  </div>
+
+  <!-- ===================== CARDS PRINCIPAIS ===================== -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <a routerLink="/admin/veiculos" class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4 hover:border-[#D9603F]/40 transition-colors">
+      <div class="flex items-center justify-between">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Veículos</p>
+        <i class="ti ti-car text-[#D9603F]"></i>
+      </div>
+      <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ totalVeiculos() }}</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        {{ veiculosDisponiveis() }} disponíveis · {{ veiculosAlugados() }} alugados · {{ veiculosEmManutencao() }} em manutenção
+      </p>
+    </a>
+
+    <a routerLink="/admin/clientes" class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4 hover:border-[#D9603F]/40 transition-colors">
+      <div class="flex items-center justify-between">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Clientes</p>
+        <i class="ti ti-users text-[#D9603F]"></i>
+      </div>
+      <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ totalClientes() }}</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        {{ clientesAtivos() }} ativos · {{ clientesBloqueados() }} bloqueados
+      </p>
+    </a>
+
+    <a routerLink="/admin/reservas" class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4 hover:border-[#D9603F]/40 transition-colors">
+      <div class="flex items-center justify-between">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Reservas ativas</p>
+        <i class="ti ti-calendar-event text-[#D9603F]"></i>
+      </div>
+      <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ reservasAtivas() }}</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        {{ reservasPendentes() }} aguardando confirmação
+      </p>
+    </a>
+
+    <a routerLink="/admin/manutencoes" class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4 hover:border-[#D9603F]/40 transition-colors">
+      <div class="flex items-center justify-between">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Manutenções</p>
+        <i class="ti ti-tool text-[#D9603F]"></i>
+      </div>
+      <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ manutencoesEmAndamento() }}</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        em andamento · {{ manutencoesAgendadas() }} agendadas
+      </p>
+    </a>
+  </div>
+
+  <!-- ===================== CARD FINANCEIRO RESUMIDO + CATEGORIAS ===================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <a routerLink="/admin/financeiro" class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-5 hover:border-[#D9603F]/40 transition-colors">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
+          <i class="ti ti-cash text-[#D9603F]"></i>
+          Financeiro
+        </h2>
+        <span class="text-xs text-gray-400 dark:text-gray-500">{{ totalCategorias() }} categorias cadastradas</span>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Recebido</p>
+          <p class="text-sm font-bold text-green-500">{{ formatarValor(totalRecebido()) }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Despesas</p>
+          <p class="text-sm font-bold text-red-500">{{ formatarValor(totalDespesasPagas()) }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Saldo</p>
+          <p
+            class="text-sm font-bold"
+            [class.text-green-500]="saldo() >= 0"
+            [class.text-red-500]="saldo() < 0"
+          >
+            {{ formatarValor(saldo()) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Gráfico de barras simples: Recebido x Despesas -->
+      <div class="mt-4 space-y-2">
+        <div>
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-gray-500 dark:text-gray-400">Recebido</span>
+            <span class="text-green-500 font-medium">{{ formatarValor(totalRecebido()) }}</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-gray-100 dark:bg-white/5 overflow-hidden">
+            <div class="h-full bg-green-500 rounded-full" [style.width.%]="percReceita()"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-gray-500 dark:text-gray-400">Despesas</span>
+            <span class="text-red-500 font-medium">{{ formatarValor(totalDespesasPagas()) }}</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-gray-100 dark:bg-white/5 overflow-hidden">
+            <div class="h-full bg-red-500 rounded-full" [style.width.%]="percDespesa()"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- ===================== FROTA POR CATEGORIA ===================== -->
+    <div class="lg:col-span-2 rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+        <h2 class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
+          <i class="ti ti-chart-pie text-[#D9603F]"></i>
+          Frota por categoria
+        </h2>
+      </div>
+      <div class="px-5 py-4 space-y-3">
+        @if (distribuicaoPorCategoria().length > 0) {
+          @for (item of distribuicaoPorCategoria(); track item.nome) {
+            <div>
+              <div class="flex items-center justify-between text-sm mb-1">
+                <span class="text-gray-700 dark:text-gray-300 font-medium truncate">{{ item.nome }}</span>
+                <span class="text-gray-500 dark:text-gray-400 shrink-0 ml-2">{{ item.qtd }} veículo(s)</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-gray-100 dark:bg-white/5 overflow-hidden">
+                <div class="h-full bg-[#D9603F] rounded-full" [style.width.%]="item.percentual"></div>
+              </div>
+            </div>
+          }
+        } @else {
+          <p class="text-center text-gray-400 dark:text-gray-500 py-6 text-sm">Nenhum veículo cadastrado.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ALERTA DE MANUTENÇÕES EM ANDAMENTO ===================== -->
+  @if (veiculosEmManutencaoLista().length > 0) {
+    <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/5 px-5 py-4 flex items-start gap-3">
+      <i class="ti ti-alert-triangle text-yellow-600 text-xl shrink-0"></i>
+      <div>
+        <p class="text-sm text-gray-700 dark:text-gray-300 font-medium">
+          {{ veiculosEmManutencaoLista().length }} veículo(s) fora de operação por manutenção:
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          @for (m of veiculosEmManutencaoLista(); track m.id; let last = $last) {
+            {{ m.veiculoModelo }}{{ !last ? ', ' : '' }}
+          }
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- ===================== ÚLTIMAS RESERVAS ===================== -->
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+      <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+        <i class="ti ti-calendar-event text-[#D9603F]"></i>
+        Últimas reservas
+      </h2>
+      <a routerLink="/admin/reservas" class="text-xs text-[#D9603F] hover:underline">Ver todas</a>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm table-fixed">
+        <colgroup>
+          <col class="w-[22%]" />
+          <col class="w-[22%]" />
+          <col class="w-[16%]" />
+          <col class="w-[16%]" />
+          <col class="w-[24%]" />
+        </colgroup>
+        <thead>
+          <tr class="text-center text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-white/5">
+            <th class="px-5 py-3 font-medium truncate">Cliente</th>
+            <th class="px-5 py-3 font-medium truncate">Veículo</th>
+            <th class="px-5 py-3 font-medium truncate">Início</th>
+            <th class="px-5 py-3 font-medium truncate">Fim</th>
+            <th class="px-5 py-3 font-medium truncate">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of ultimasReservas(); track r.id) {
+            <tr class="text-center border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+              <td class="px-5 py-3 text-gray-900 dark:text-white font-medium truncate">{{ r.clienteNome }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ r.veiculoModelo }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ r.dataInicio }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ r.dataFim }}</td>
+              <td class="px-5 py-3">
+                <span
+                  class="inline-flex items-center justify-center min-w-[100px] rounded-full px-2.5 py-1 text-xs font-medium"
+                  [class.bg-yellow-500/10]="r.status === 'pendente'"
+                  [class.text-yellow-600]="r.status === 'pendente'"
+                  [class.bg-blue-500/10]="r.status === 'confirmada'"
+                  [class.text-blue-500]="r.status === 'confirmada'"
+                  [class.bg-[#D9603F]/10]="r.status === 'em_andamento'"
+                  [class.text-[#D9603F]]="r.status === 'em_andamento'"
+                  [class.bg-green-500/10]="r.status === 'finalizada'"
+                  [class.text-green-500]="r.status === 'finalizada'"
+                >
+                  {{ reservaStatusLabel(r.status) }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="px-5 py-10 text-center text-gray-400 dark:text-gray-500">
+                Nenhuma reserva encontrada.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>

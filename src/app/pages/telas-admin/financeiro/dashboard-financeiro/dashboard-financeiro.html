@@ -1,0 +1,198 @@
+<main class="p-6 space-y-6 relative">
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Financeiro</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Visão geral das receitas e despesas da locadora</p>
+    </div>
+  </div>
+
+  <!-- ===================== CARDS DE INDICADORES ===================== -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+      <p class="text-xs text-gray-500 dark:text-gray-400">Recebido</p>
+      <p class="text-lg font-bold text-green-500 mt-1">{{ formatarValor(totalRecebido()) }}</p>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+      <p class="text-xs text-gray-500 dark:text-gray-400">A receber</p>
+      <p class="text-lg font-bold text-[#D9603F] mt-1">{{ formatarValor(totalAReceber()) }}</p>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+      <p class="text-xs text-gray-500 dark:text-gray-400">Despesas pagas</p>
+      <p class="text-lg font-bold text-red-500 mt-1">{{ formatarValor(totalDespesasPagas()) }}</p>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+      <p class="text-xs text-gray-500 dark:text-gray-400">Saldo</p>
+      <p
+        class="text-lg font-bold mt-1"
+        [class.text-green-500]="saldo() >= 0"
+        [class.text-red-500]="saldo() < 0"
+      >
+        {{ formatarValor(saldo()) }}
+      </p>
+    </div>
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+      <p class="text-xs text-gray-500 dark:text-gray-400">Ticket médio</p>
+      <p class="text-lg font-bold text-gray-900 dark:text-white mt-1">{{ formatarValor(ticketMedio()) }}</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <!-- ===================== RECEITA X DESPESA (6 MESES) ===================== -->
+    <div class="lg:col-span-2 rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+        <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+          <i class="ti ti-chart-bar text-[#D9603F]"></i>
+          Receita x despesa (últimos 6 meses)
+        </h2>
+        <span
+          class="text-xs font-medium rounded-full px-2.5 py-1"
+          [class.bg-green-500/10]="variacaoMesAtual() >= 0"
+          [class.text-green-500]="variacaoMesAtual() >= 0"
+          [class.bg-red-500/10]="variacaoMesAtual() < 0"
+          [class.text-red-500]="variacaoMesAtual() < 0"
+        >
+          {{ variacaoMesAtual() >= 0 ? '+' : '' }}{{ variacaoMesAtual() | number:'1.0-0' }}% vs mês anterior
+        </span>
+      </div>
+
+      <div class="px-5 py-5">
+        <div class="flex items-end justify-between gap-3 h-48">
+          @for (mes of resumoMensal(); track mes.chave) {
+            <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+              <div class="flex items-end gap-1 h-full w-full justify-center">
+                <div
+                  class="w-3 rounded-t bg-green-500/70"
+                  [style.height.%]="(mes.receita / maiorValorMensal()) * 100"
+                  [title]="'Receita: ' + formatarValor(mes.receita)"
+                ></div>
+                <div
+                  class="w-3 rounded-t bg-red-500/70"
+                  [style.height.%]="(mes.despesa / maiorValorMensal()) * 100"
+                  [title]="'Despesa: ' + formatarValor(mes.despesa)"
+                ></div>
+              </div>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ mes.label }}</span>
+            </div>
+          }
+        </div>
+        <div class="flex items-center gap-4 mt-4 text-xs text-gray-500 dark:text-gray-400">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-green-500/70"></span> Receita</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-red-500/70"></span> Despesa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== DESPESAS POR CATEGORIA ===================== -->
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+        <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+          <i class="ti ti-chart-pie text-[#D9603F]"></i>
+          Despesas por categoria
+        </h2>
+      </div>
+      <div class="px-5 py-4 space-y-3">
+        @if (despesasPorCategoria().length > 0) {
+          @for (item of despesasPorCategoria(); track item.nome) {
+            <div>
+              <div class="flex items-center justify-between text-sm mb-1">
+                <span class="text-gray-700 dark:text-gray-300 font-medium truncate">{{ item.nome }}</span>
+                <span class="text-gray-500 dark:text-gray-400 shrink-0 ml-2">{{ formatarValor(item.valor) }}</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-gray-100 dark:bg-white/5 overflow-hidden">
+                <div class="h-full bg-red-500/70 rounded-full" [style.width.%]="item.percentual"></div>
+              </div>
+            </div>
+          }
+        } @else {
+          <p class="text-center text-gray-400 dark:text-gray-500 py-6 text-sm">Nenhuma despesa paga registrada.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ALERTA DE INADIMPLÊNCIA ===================== -->
+  @if (qtdInadimplentes() > 0) {
+    <div class="rounded-xl border border-red-500/20 bg-red-500/5 px-5 py-4 flex items-center gap-3">
+      <i class="ti ti-alert-triangle text-red-500 text-xl"></i>
+      <p class="text-sm text-gray-700 dark:text-gray-300">
+        <span class="font-semibold text-red-500">{{ qtdInadimplentes() }}</span>
+        {{ qtdInadimplentes() === 1 ? 'recebimento está' : 'recebimentos estão' }} em atraso. Verifique a tela Financeiro para regularizar.
+      </p>
+    </div>
+  }
+
+  <!-- ===================== ÚLTIMOS LANÇAMENTOS ===================== -->
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+      <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+        <i class="ti ti-clock text-[#D9603F]"></i>
+        Últimos lançamentos
+      </h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm table-fixed">
+        <colgroup>
+          <col class="w-[12%]" />
+          <col class="w-[38%]" />
+          <col class="w-[16%]" />
+          <col class="w-[17%]" />
+          <col class="w-[17%]" />
+        </colgroup>
+        <thead>
+          <tr class="text-center text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-white/5">
+            <th class="px-5 py-3 font-medium truncate">Tipo</th>
+            <th class="px-5 py-3 font-medium truncate">Descrição</th>
+            <th class="px-5 py-3 font-medium truncate">Valor</th>
+            <th class="px-5 py-3 font-medium truncate">Data</th>
+            <th class="px-5 py-3 font-medium truncate">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (l of ultimosLancamentos(); track l.id) {
+            <tr class="text-center border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+              <td class="px-5 py-3">
+                <span
+                  class="inline-flex items-center justify-center min-w-[72px] rounded-full px-2.5 py-1 text-xs font-medium"
+                  [class.bg-green-500/10]="l.tipo === 'receita'"
+                  [class.text-green-500]="l.tipo === 'receita'"
+                  [class.bg-red-500/10]="l.tipo === 'despesa'"
+                  [class.text-red-500]="l.tipo === 'despesa'"
+                >
+                  {{ l.tipo === 'receita' ? 'Receita' : 'Despesa' }}
+                </span>
+              </td>
+              <td class="px-5 py-3 text-gray-900 dark:text-white font-medium truncate">{{ l.descricao }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ formatarValor(l.valor) }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ l.dataPagamento || l.dataVencimento || '-' }}</td>
+              <td class="px-5 py-3">
+                <span
+                  class="inline-flex items-center justify-center min-w-[80px] rounded-full px-2.5 py-1 text-xs font-medium"
+                  [class.bg-green-500/10]="l.status === 'pago'"
+                  [class.text-green-500]="l.status === 'pago'"
+                  [class.bg-yellow-500/10]="l.status === 'pendente'"
+                  [class.text-yellow-600]="l.status === 'pendente'"
+                  [class.bg-red-500/10]="l.status === 'atrasado'"
+                  [class.text-red-500]="l.status === 'atrasado'"
+                  [class.bg-gray-500/10]="l.status === 'estornado'"
+                  [class.text-gray-500]="l.status === 'estornado'"
+                >
+                  {{ l.status === 'pago' ? (l.tipo === 'receita' ? 'Recebido' : 'Pago') : (l.status === 'pendente' ? 'Pendente' : (l.status === 'atrasado' ? 'Em atraso' : 'Estornado')) }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="px-5 py-10 text-center text-gray-400 dark:text-gray-500">
+                Nenhum lançamento encontrado.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
