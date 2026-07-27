@@ -10,25 +10,24 @@ export class InfoService {
     this.seedCategorias();
     this.seedClientes();
     this.seedVeiculos();
+    this.seedManutencoes();
   }
 
   private seedCategorias(): void {
-    const existing = localStorage.getItem(CATEGORIAS_KEY);
-    if (existing && JSON.parse(existing).length > 0) return;
+    if (this.temDados(CATEGORIAS_KEY)) return;
 
     const categorias = [
-      { id: 'cat-1', nome: 'Econômico', valorDiaria: 89.9 },
-      { id: 'cat-2', nome: 'Sedan', valorDiaria: 129.9 },
-      { id: 'cat-3', nome: 'SUV', valorDiaria: 179.9 },
-      { id: 'cat-4', nome: 'Utilitário', valorDiaria: 199.9 },
-      { id: 'cat-5', nome: 'Esportivo', valorDiaria: 349.9 },
+      { id: 'cat-1', nome: 'Econômico' },
+      { id: 'cat-2', nome: 'Sedan' },
+      { id: 'cat-3', nome: 'SUV' },
+      { id: 'cat-4', nome: 'Utilitário' },
+      { id: 'cat-5', nome: 'Esportivo' },
     ];
     localStorage.setItem(CATEGORIAS_KEY, JSON.stringify(categorias));
   }
 
   private seedClientes(): void {
-    const existing = localStorage.getItem(CLIENTES_KEY);
-    if (existing && JSON.parse(existing).length > 0) return;
+    if (this.temDados(CLIENTES_KEY)) return;
 
     const clientes = [
       { id: 'cli-1', nome: 'Ana Beatriz Souza', email: 'ana.souza@email.com', telefone: '(47) 99123-4567', cpf: '123.456.789-01', status: 'ativo' },
@@ -39,9 +38,21 @@ export class InfoService {
     localStorage.setItem(CLIENTES_KEY, JSON.stringify(clientes));
   }
 
+  // Considera "tem dados" só se a chave existir E o array não estiver vazio.
+  // Isso evita que um array vazio salvo em algum teste anterior bloqueie o seed pra sempre.
+  private temDados(chave: string): boolean {
+    const raw = localStorage.getItem(chave);
+    if (!raw) return false;
+    try {
+      const lista = JSON.parse(raw);
+      return Array.isArray(lista) && lista.length > 0;
+    } catch {
+      return false;
+    }
+  }
+
   private seedVeiculos(): void {
-    const existing = localStorage.getItem(VEICULOS_KEY);
-    if (existing && JSON.parse(existing).length > 0) return;
+    if (this.temDados(VEICULOS_KEY)) return;
 
     const veiculos = [
       { id: 'vei-1', modelo: 'Chevrolet Onix', placa: 'ABC1D23', ano: 2023, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '' },
@@ -55,5 +66,27 @@ export class InfoService {
       { id: 'vei-9', modelo: 'Ford Mustang', placa: 'YZA5B67', ano: 2024, categoriaId: 'cat-5', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '' },
     ];
     localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculos));
+  }
+
+  private seedManutencoes(): void {
+    const MANUTENCOES_KEY = 'manutencoes';
+    if (this.temDados(MANUTENCOES_KEY)) return;
+
+    const manutencoes = [
+      { id: 'man-1', veiculoId: 'vei-2', veiculoModelo: 'Volkswagen Polo', tipo: 'preventiva', data: '2026-07-20', custo: 350, status: 'em_andamento' },
+      { id: 'man-2', veiculoId: 'vei-6', veiculoModelo: 'Hyundai Creta', tipo: 'corretiva', data: '2026-06-10', custo: 890, status: 'concluida' },
+      { id: 'man-3', veiculoId: 'vei-9', veiculoModelo: 'Ford Mustang', tipo: 'preventiva', data: '2026-08-05', custo: 420, status: 'agendada' },
+    ];
+    localStorage.setItem(MANUTENCOES_KEY, JSON.stringify(manutencoes));
+
+    // Sincroniza: a manutenção "man-1" está em andamento, então o veículo
+    // vei-2 (Polo) já nasce marcado como "manutencao" em vez de "disponivel".
+    const raw = localStorage.getItem(VEICULOS_KEY);
+    if (raw) {
+      const veiculos2 = JSON.parse(raw).map((v: any) =>
+        v.id === 'vei-2' ? { ...v, status: 'manutencao' } : v
+      );
+      localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculos2));
+    }
   }
 }

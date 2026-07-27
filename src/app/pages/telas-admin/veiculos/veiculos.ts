@@ -9,7 +9,7 @@ export interface Veiculo {
   ano: number | null;
   categoriaId: string;
   combustivel: string;
-  status: 'disponivel' | 'alugado';
+  status: 'disponivel' | 'alugado' | 'manutencao';
   imagemUrl?: string; // base64 da imagem, salvo direto no localStorage
 }
 
@@ -19,6 +19,7 @@ export interface Categoria {
 }
 
 const STORAGE_KEY = 'veiculos';
+const CATEGORIAS_KEY = 'categorias';
 
 @Component({
   selector: 'app-veiculos',
@@ -39,6 +40,11 @@ export class VeiculosComponent {
     this.carregarCategorias();
   }
 
+  private carregarCategorias(): void {
+    const raw = localStorage.getItem(CATEGORIAS_KEY);
+    this.categorias = raw ? JSON.parse(raw) : [];
+  }
+
   private veiculoVazio(): Veiculo {
     return {
       id: '',
@@ -55,11 +61,6 @@ export class VeiculosComponent {
   private carregar(): void {
     const raw = localStorage.getItem(STORAGE_KEY);
     this.veiculos = raw ? JSON.parse(raw) : [];
-  }
-
-  private carregarCategorias(): void {
-    const raw = localStorage.getItem('categorias');
-    this.categorias = raw ? JSON.parse(raw) : [];
   }
 
   private salvarNoStorage(): void {

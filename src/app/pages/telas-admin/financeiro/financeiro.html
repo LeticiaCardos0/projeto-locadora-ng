@@ -104,8 +104,8 @@
         >
           <option value="">Todos</option>
           <option value="pendente">Pendente</option>
-          <option value="pago">Pago</option>
-          <option value="atrasado">Atrasado</option>
+          <option value="pago">Pago / Recebido</option>
+          <option value="atrasado">Em atraso</option>
           <option value="estornado">Estornado</option>
         </select>
       </div>
@@ -186,7 +186,7 @@
                   {{ l.tipo === 'receita' ? 'Receita' : 'Despesa' }}
                 </span>
               </td>
-              <td class="px-5 py-3 text-left text-gray-900 dark:text-white font-medium truncate">
+              <td class="px-5 py-3 text-gray-900 dark:text-white font-medium truncate">
                 {{ l.descricao }}
                 @if (l.clienteNome) {
                   <p class="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">{{ l.clienteNome }}</p>
@@ -197,7 +197,7 @@
               <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ formaPagamentoLabel(l.formaPagamento) }}</td>
               <td class="px-5 py-3">
                 <span
-                  class="inline-flex items-center justify-center min-w-[80px] rounded-full px-2.5 py-1 text-xs font-medium"
+                  class="inline-flex items-center justify-center min-w-[72px] rounded-full px-2.5 py-1 text-xs font-medium bg-red-500/10 text-red-500"
                   [class.bg-green-500/10]="statusExibido(l) === 'pago'"
                   [class.text-green-500]="statusExibido(l) === 'pago'"
                   [class.bg-yellow-500/10]="statusExibido(l) === 'pendente'"
@@ -207,12 +207,12 @@
                   [class.bg-gray-500/10]="statusExibido(l) === 'estornado'"
                   [class.text-gray-500]="statusExibido(l) === 'estornado'"
                 >
-                  {{ statusExibido(l) === 'pago' ? 'Pago' : statusExibido(l) === 'pendente' ? 'Pendente' : statusExibido(l) === 'atrasado' ? 'Atrasado' : 'Estornado' }}
+                  {{ statusLabel(l) }}
                 </span>
               </td>
               <td class="px-5 py-3">
                 <div class="flex items-center justify-center gap-2">
-                  @if (l.status === 'pendente') {
+                  @if (l.status === 'pendente' || l.status === 'atrasado') {
                     <button
                       (click)="marcarPago(l.id)"
                       class="cursor-pointer rounded-md p-2 text-gray-500 hover:text-green-500 transition-colors"
@@ -351,9 +351,18 @@
                 name="status"
                 class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
               >
-                <option value="pendente">Pendente</option>
-                <option value="pago">Pago</option>
-                <option value="estornado">Estornado</option>
+                @if (lancamentoAtual.tipo === 'receita') {
+                  <option value="pendente">Pendente</option>
+                  <option value="pago">Recebido</option>
+                  <option value="atrasado">Em atraso</option>
+                  @if (lancamentoAtual.status === 'estornado') {
+                    <option value="estornado">Estornado</option>
+                  }
+                } @else {
+                  <option value="pendente">Pendente</option>
+                  <option value="pago">Pago</option>
+                  <option value="estornado">Estornado</option>
+                }
               </select>
             </div>
           </div>

@@ -67,13 +67,15 @@
               </td>
               <td class="px-5 py-3">
                 <span
-                  class="inline-flex items-center justify-center min-w-[72px] rounded-full px-2.5 py-1 text-xs font-medium"
+                  class="inline-flex items-center justify-center min-w-[90px] rounded-full px-2.5 py-1 text-xs font-medium"
                   [class.bg-green-500/10]="v.status === 'disponivel'"
                   [class.text-green-500]="v.status === 'disponivel'"
                   [class.bg-red-500/10]="v.status === 'alugado'"
                   [class.text-red-500]="v.status === 'alugado'"
+                  [class.bg-yellow-500/10]="v.status === 'manutencao'"
+                  [class.text-yellow-600]="v.status === 'manutencao'"
                 >
-                  {{ v.status === 'disponivel' ? 'Disponivel' : 'Alugado' }}
+                  {{ v.status === 'disponivel' ? 'Disponivel' : (v.status === 'alugado' ? 'Alugado' : 'Manutenção') }}
                 </span>
               </td>
               <td class="px-5 py-3">
@@ -236,6 +238,7 @@
               >
                 <option value="disponivel">Disponivel</option>
                 <option value="alugado">Alugado</option>
+                <option value="manutencao">Em manutenção</option>
               </select>
             </div>
           </div>

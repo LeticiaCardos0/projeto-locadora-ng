@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 export type TipoLancamento = 'receita' | 'despesa';
-export type StatusLancamento = 'pendente' | 'pago' | 'estornado';
+export type StatusLancamento = 'pendente' | 'pago' | 'estornado' | 'atrasado';
 export type FormaPagamento = '' | 'pix' | 'cartao' | 'dinheiro' | 'transferencia';
 
 export interface Lancamento {
@@ -178,6 +178,7 @@ export class FinanceiroComponent {
   }
 
   isAtrasado(l: Lancamento): boolean {
+    if (l.status === 'atrasado') return true;
     if (l.status !== 'pendente' || !l.dataVencimento) return false;
     const hoje = new Date().toISOString().slice(0, 10);
     return l.dataVencimento < hoje;
@@ -186,6 +187,15 @@ export class FinanceiroComponent {
   statusExibido(l: Lancamento): 'pendente' | 'pago' | 'estornado' | 'atrasado' {
     if (this.isAtrasado(l)) return 'atrasado';
     return l.status;
+  }
+
+  // rótulo do status adaptado ao tipo: receita usa "Recebido", despesa usa "Pago"
+  statusLabel(l: Lancamento): string {
+    const status = this.statusExibido(l);
+    if (status === 'pendente') return 'Pendente';
+    if (status === 'atrasado') return 'Em atraso';
+    if (status === 'estornado') return 'Estornado';
+    return l.tipo === 'receita' ? 'Recebido' : 'Pago';
   }
 
   // ===== filtros aplicados =====
