@@ -1,5 +1,4 @@
-@'
-{
+﻿{
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "projeto-locadora-ng",
   "compatibility_date": "2026-07-31",
@@ -14,4 +13,3 @@
     "nodejs_compat"
   ]
 }
-'@ | Out-File -Encoding utf8 wrangler.jsonc
