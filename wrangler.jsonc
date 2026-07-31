@@ -1,15 +1,17 @@
+@'
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "projeto-futnerds-ng",
+  "name": "projeto-locadora-ng",
   "compatibility_date": "2026-07-31",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "dist/projeto-locadora-ng/browser",
+    "directory": "dist/trabalho-locadora-ng/browser",
     "not_found_handling": "single-page-application"
   },
   "compatibility_flags": [
     "nodejs_compat"
   ]
 }
+'@ | Out-File -Encoding utf8 wrangler.jsonc
