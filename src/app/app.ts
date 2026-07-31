@@ -7,7 +7,7 @@ import { InfoService } from './info';
 
 @Component({
   selector: 'app-root',
-  imports: [SidebarComponent,TopbarComponent, FooterComponent, RouterOutlet, RouterLink],
+  imports: [SidebarComponent,TopbarComponent, FooterComponent, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
