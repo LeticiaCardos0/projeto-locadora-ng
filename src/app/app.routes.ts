@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home';
 import { VeiculosComponent } from './pages/telas-admin/veiculos/veiculos';
 import { ClientesComponent } from './pages/telas-admin/clientes/clientes';
 import { ReservasComponent } from './pages/telas-admin/reservas/reservas';
