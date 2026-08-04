@@ -1,6 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {
+  campoPreenchido,
+  contemEmoji,
+  bloquearEmojiKeydown,
+  valorValido,
+  dataValida,
+  DATA_MINIMA,
+  ANO_MINIMO,
+  formatarDataBr,
+} from '../../../shared/validadores';
 
 export type TipoLancamento = 'receita' | 'despesa';
 export type StatusLancamento = 'pendente' | 'pago' | 'estornado' | 'atrasado';
@@ -68,6 +78,10 @@ export class FinanceiroComponent {
   mostrarForm = false;
   editando = false;
   lancamentoAtual: Lancamento = this.lancamentoVazio();
+
+  dataMinima = DATA_MINIMA;
+  formatarDataBr = formatarDataBr;
+  bloquearEmojiKeydown = bloquearEmojiKeydown;
 
   constructor() {
     this.sincronizarReceitasDeReservas();
@@ -309,8 +323,20 @@ export class FinanceiroComponent {
   }
 
   salvar(): void {
-    if (!this.lancamentoAtual.descricao || !this.lancamentoAtual.valor) {
-      alert(this.lancamentoAtual.tipo === 'receita' ? 'Informe descrição e valor do recebimento.' : 'Informe descrição e valor da despesa.');
+    if (!campoPreenchido(this.lancamentoAtual.descricao) || !valorValido(this.lancamentoAtual.valor) || !this.lancamentoAtual.valor) {
+      alert(
+        this.lancamentoAtual.tipo === 'receita'
+          ? 'Informe descrição e valor do recebimento (valor não pode ser negativo).'
+          : 'Informe descrição e valor da despesa (valor não pode ser negativo).'
+      );
+      return;
+    }
+    if (contemEmoji(this.lancamentoAtual.descricao)) {
+      alert('Emojis não são permitidos na descrição.');
+      return;
+    }
+    if (this.lancamentoAtual.dataVencimento && !dataValida(this.lancamentoAtual.dataVencimento)) {
+      alert(`A data de vencimento deve ser de ${ANO_MINIMO} ou posterior.`);
       return;
     }
 

@@ -114,6 +114,7 @@
         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Vencimento de</label>
         <input
           type="date"
+          [min]="dataMinima"
           [(ngModel)]="filtroDataInicio"
           name="filtroDataInicio"
           class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
@@ -125,6 +126,7 @@
         <div class="flex gap-2">
           <input
             type="date"
+            [min]="dataMinima"
             [(ngModel)]="filtroDataFim"
             name="filtroDataFim"
             class="w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
@@ -193,7 +195,7 @@
                 }
               </td>
               <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ formatarValor(l.valor) }}</td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ l.dataVencimento || '-' }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ formatarDataBr(l.dataVencimento) }}</td>
               <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ formaPagamentoLabel(l.formaPagamento) }}</td>
               <td class="px-5 py-3">
                 <span
@@ -284,6 +286,9 @@
             <input
               [(ngModel)]="lancamentoAtual.descricao"
               name="descricao"
+              required
+              maxlength="120"
+              (keydown)="bloquearEmojiKeydown($event)"
               [disabled]="ehVinculadoAReserva(lancamentoAtual)"
               placeholder="Ex: Manutenção preventiva, seguro do mês..."
               class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F] disabled:opacity-60"
@@ -297,6 +302,7 @@
                 type="number"
                 min="0"
                 step="0.01"
+                required
                 [(ngModel)]="lancamentoAtual.valor"
                 name="valor"
                 [disabled]="ehVinculadoAReserva(lancamentoAtual)"
@@ -307,6 +313,7 @@
               <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Vencimento</label>
               <input
                 type="date"
+                [min]="dataMinima"
                 [(ngModel)]="lancamentoAtual.dataVencimento"
                 name="dataVencimento"
                 [disabled]="ehVinculadoAReserva(lancamentoAtual)"

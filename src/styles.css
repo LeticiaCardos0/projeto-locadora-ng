@@ -6,3 +6,13 @@
 @theme {
   --font-montserrat: "Montserrat", sans-serif;
 }
+
+/* Ícone do seletor de data: preto no tema claro, branco no tema escuro */
+input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0);
+}
+
+html.dark input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

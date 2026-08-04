@@ -1,6 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { dataValida, DATA_MINIMA, ANO_MINIMO, formatarDataBr } from '../../../shared/validadores';
 
 export type StatusReserva = 'pendente' | 'confirmada' | 'em_andamento' | 'finalizada' | 'cancelada';
 
@@ -64,6 +65,9 @@ export class ReservasComponent {
   reservaAtual: Reserva = this.reservaVazia();
   categoriaFiltro = '';
   clienteSelecionadoInfo: Cliente | null = null;
+
+  dataMinima = DATA_MINIMA;
+  formatarDataBr = formatarDataBr;
 
   constructor() {
     this.carregarTudo();
@@ -190,8 +194,12 @@ export class ReservasComponent {
       alert('Selecione um cliente e um veículo disponível.');
       return;
     }
-    if (!this.reservaAtual.dataInicio || !this.reservaAtual.dataFim) {
-      alert('Informe as datas de início e fim.');
+    if (!dataValida(this.reservaAtual.dataInicio) || !dataValida(this.reservaAtual.dataFim)) {
+      alert(`Informe datas de início e fim válidas (${ANO_MINIMO} ou posterior).`);
+      return;
+    }
+    if (this.reservaAtual.dataFim < this.reservaAtual.dataInicio) {
+      alert('A data de fim não pode ser anterior à data de início.');
       return;
     }
 

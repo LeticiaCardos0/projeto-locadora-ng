@@ -38,6 +38,7 @@
         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">De</label>
         <input
           type="date"
+          [min]="dataMinima"
           [(ngModel)]="filtroDataInicio"
           name="filtroDataInicio"
           class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
@@ -48,6 +49,7 @@
         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Até</label>
         <input
           type="date"
+          [min]="dataMinima"
           [(ngModel)]="filtroDataFim"
           name="filtroDataFim"
           class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
@@ -100,8 +102,8 @@
             <tr class="text-center border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
               <td class="px-5 py-3 text-gray-900 dark:text-white font-medium truncate">{{ r.clienteNome }}</td>
               <td class="px-5 py-3 text-gray-700 dark:text-gray-300 truncate">{{ r.veiculoModelo }}</td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ r.dataInicio }}</td>
-              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ r.dataFim }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ formatarDataBr(r.dataInicio) }}</td>
+              <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ formatarDataBr(r.dataFim) }}</td>
               <td class="px-5 py-3">
                 <span
                   class="inline-flex items-center justify-center min-w-[100px] rounded-full px-2.5 py-1 text-xs font-medium"
@@ -268,6 +270,8 @@
               <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data início *</label>
               <input
                 type="date"
+                required
+                [min]="dataMinima"
                 [(ngModel)]="reservaAtual.dataInicio"
                 name="dataInicio"
                 class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
@@ -277,6 +281,8 @@
               <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Data fim *</label>
               <input
                 type="date"
+                required
+                [min]="reservaAtual.dataInicio || dataMinima"
                 [(ngModel)]="reservaAtual.dataFim"
                 name="dataFim"
                 class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"

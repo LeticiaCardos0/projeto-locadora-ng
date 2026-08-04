@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { campoPreenchido, contemEmoji, bloquearEmojiKeydown } from '../../../shared/validadores';
 
 export interface Cliente {
   id: string;
@@ -38,6 +39,8 @@ export class ClientesComponent {
   mostrarHistorico = false;
   clienteSelecionado: Cliente | null = null;
   historicoReservas: ReservaResumo[] = [];
+
+  bloquearEmojiKeydown = bloquearEmojiKeydown;
 
   constructor() {
     this.carregar();
@@ -97,7 +100,33 @@ export class ClientesComponent {
     this.clienteAtual = this.clienteVazio();
   }
 
+  private validar(): boolean {
+    if (!campoPreenchido(this.clienteAtual.nome)) {
+      alert('Informe o nome do cliente.');
+      return false;
+    }
+    if (!campoPreenchido(this.clienteAtual.email)) {
+      alert('Informe o e-mail do cliente.');
+      return false;
+    }
+    if (!campoPreenchido(this.clienteAtual.telefone)) {
+      alert('Informe o telefone do cliente.');
+      return false;
+    }
+    if (!campoPreenchido(this.clienteAtual.cpf)) {
+      alert('Informe o CPF do cliente.');
+      return false;
+    }
+    if (contemEmoji(this.clienteAtual.nome) || contemEmoji(this.clienteAtual.email)) {
+      alert('Emojis não são permitidos nos campos de texto.');
+      return false;
+    }
+    return true;
+  }
+
   salvar(): void {
+    if (!this.validar()) return;
+
     if (this.editando) {
       const index = this.clientes.findIndex((c) => c.id === this.clienteAtual.id);
       if (index > -1) {

@@ -1,6 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { dataValida, valorValido, DATA_MINIMA, ANO_MINIMO, formatarDataBr } from '../../../shared/validadores';
 
 export type TipoManutencao = 'preventiva' | 'corretiva';
 export type StatusManutencao = 'agendada' | 'em_andamento' | 'concluida' | 'cancelada';
@@ -52,6 +53,9 @@ export class ManutencoesComponent {
   mostrarForm = false;
   editando = false;
   manutencaoAtual: Manutencao = this.manutencaoVazia();
+
+  dataMinima = DATA_MINIMA;
+  formatarDataBr = formatarDataBr;
 
   constructor() {
     this.carregarTudo();
@@ -119,8 +123,12 @@ export class ManutencoesComponent {
       alert('Selecione um veículo.');
       return;
     }
-    if (!this.manutencaoAtual.data) {
-      alert('Informe a data da manutenção.');
+    if (!dataValida(this.manutencaoAtual.data)) {
+      alert(`Informe uma data de manutenção válida (${ANO_MINIMO} ou posterior).`);
+      return;
+    }
+    if (this.manutencaoAtual.custo !== null && !valorValido(this.manutencaoAtual.custo)) {
+      alert('O custo da manutenção não pode ser negativo.');
       return;
     }
 

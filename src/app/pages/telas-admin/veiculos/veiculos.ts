@@ -1,6 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {
+  campoPreenchido,
+  contemEmoji,
+  gerarProximoId,
+  bloquearEmojiKeydown,
+  valorValido,
+  ANO_MINIMO,
+} from '../../../shared/validadores';
 
 export interface Veiculo {
   id: string;
@@ -34,6 +42,9 @@ export class VeiculosComponent {
   mostrarForm = false;
   editando = false;
   veiculoAtual: Veiculo = this.veiculoVazio();
+
+  // exposto ao template para bloquear emojis na digitação
+  bloquearEmojiKeydown = bloquearEmojiKeydown;
 
   constructor() {
     this.carregar();
@@ -92,14 +103,39 @@ export class VeiculosComponent {
     this.veiculoAtual = this.veiculoVazio();
   }
 
+  private validar(): boolean {
+    if (!campoPreenchido(this.veiculoAtual.modelo)) {
+      alert('Informe o modelo do veículo.');
+      return false;
+    }
+    if (contemEmoji(this.veiculoAtual.modelo) || contemEmoji(this.veiculoAtual.placa)) {
+      alert('Emojis não são permitidos nos campos de texto.');
+      return false;
+    }
+    if (!valorValido(this.veiculoAtual.ano)) {
+      alert('Informe um ano válido (não pode ser negativo).');
+      return false;
+    }
+    if (this.veiculoAtual.ano! < ANO_MINIMO) {
+      alert(`O ano do veículo deve ser ${ANO_MINIMO} ou posterior.`);
+      return false;
+    }
+    return true;
+  }
+
   salvar(): void {
+    if (!this.validar()) return;
+
     if (this.editando) {
       const index = this.veiculos.findIndex((v) => v.id === this.veiculoAtual.id);
       if (index > -1) {
         this.veiculos[index] = { ...this.veiculoAtual };
       }
     } else {
-      this.veiculoAtual.id = Date.now().toString();
+      this.veiculoAtual.id = gerarProximoId(
+        'V',
+        this.veiculos.map((v) => v.id)
+      );
       this.veiculos.push({ ...this.veiculoAtual });
     }
 

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { campoPreenchido, contemEmoji, bloquearEmojiKeydown, valorValido } from '../../../shared/validadores';
 
 export interface Categoria {
   id: string;
@@ -34,6 +35,8 @@ export class CategoriasComponent {
   mostrarVeiculos = false;
   categoriaSelecionada: Categoria | null = null;
   veiculosDaCategoria: VeiculoResumo[] = [];
+
+  bloquearEmojiKeydown = bloquearEmojiKeydown;
 
   constructor() {
     this.carregar();
@@ -103,7 +106,25 @@ export class CategoriasComponent {
     this.categoriaAtual = this.categoriaVazia();
   }
 
+  private validar(): boolean {
+    if (!campoPreenchido(this.categoriaAtual.nome)) {
+      alert('Informe o nome da categoria.');
+      return false;
+    }
+    if (contemEmoji(this.categoriaAtual.nome)) {
+      alert('Emojis não são permitidos no nome da categoria.');
+      return false;
+    }
+    if (!valorValido(this.categoriaAtual.valorDiaria)) {
+      alert('Informe um valor de diária válido (não pode ser negativo).');
+      return false;
+    }
+    return true;
+  }
+
   salvar(): void {
+    if (!this.validar()) return;
+
     if (this.editando) {
       const index = this.categorias.findIndex((c) => c.id === this.categoriaAtual.id);
       if (index > -1) {
