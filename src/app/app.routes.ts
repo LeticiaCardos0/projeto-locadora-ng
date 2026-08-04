@@ -11,8 +11,7 @@ import { DashboardFinanceiroComponent } from './pages/telas-admin/financeiro/das
 import { AdminHomeComponent } from './pages/telas-admin/admin-home/admin-home';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'admin', component: AdminHomeComponent },
+    { path: '', component: AdminHomeComponent },
     { path: 'admin/veiculos', component: VeiculosComponent },
     { path: 'admin/clientes', component: ClientesComponent },
     { path: 'admin/reservas', component: ReservasComponent },
