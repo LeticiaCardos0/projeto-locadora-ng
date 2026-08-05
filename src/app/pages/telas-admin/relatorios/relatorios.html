@@ -1,0 +1,57 @@
+<main class="p-6">
+  <div
+    class="min-h-[70vh] flex flex-col items-center justify-center text-center rounded-2xl border border-gray-200 dark:border-white/5 bg-gradient-to-br from-[#D9603F]/10 via-white to-white dark:from-[#D9603F]/10 dark:via-[#0a0b0f] dark:to-[#0a0b0f] px-6 py-16"
+  >
+    <!-- ilustração -->
+    <svg viewBox="0 0 200 160" class="w-48 h-40 mb-6" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="180" height="140" rx="16" fill="#D9603F" fill-opacity="0.1" />
+
+      <!-- prancheta -->
+      <rect x="55" y="30" width="90" height="110" rx="8" fill="#D9603F" />
+      <rect x="80" y="22" width="40" height="16" rx="6" fill="#C2542F" />
+      <rect x="66" y="52" width="68" height="66" rx="4" fill="white" fill-opacity="0.95" />
+
+      <!-- barras do gráfico -->
+      <rect x="76" y="95" width="10" height="18" rx="2" fill="#D9603F" fill-opacity="0.5" />
+      <rect x="92" y="82" width="10" height="31" rx="2" fill="#D9603F" fill-opacity="0.7" />
+      <rect x="108" y="70" width="10" height="43" rx="2" fill="#D9603F" />
+      <rect x="124" y="88" width="10" height="25" rx="2" fill="#D9603F" fill-opacity="0.6" />
+
+      <!-- relógio (em construção) -->
+      <circle cx="150" cy="35" r="24" fill="#f59e0b" />
+      <circle cx="150" cy="35" r="18" fill="white" />
+      <line x1="150" y1="35" x2="150" y2="24" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" />
+      <line x1="150" y1="35" x2="158" y2="38" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" />
+    </svg>
+
+    <span
+      class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-semibold px-3 py-1 mb-4"
+    >
+      <i class="ti ti-clock-hour-4"></i>
+      Em construção
+    </span>
+
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">Relatórios chegando em breve</h1>
+    <p class="mt-3 text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-md">
+      Estamos preparando relatórios detalhados de frota, financeiro e reservas para você acompanhar o desempenho da
+      locadora com muito mais profundidade.
+    </p>
+
+    <div class="mt-8 flex flex-col sm:flex-row gap-3">
+      <a
+        routerLink="/admin"
+        class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#D9603F] hover:bg-[#C2542F] px-5 py-3 text-sm font-semibold text-white transition-colors"
+      >
+        <i class="ti ti-home"></i>
+        Voltar para o início
+      </a>
+      <a
+        routerLink="/admin/financeiro"
+        class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-white/10 px-5 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+      >
+        <i class="ti ti-report-money"></i>
+        Ver Financeiro
+      </a>
+    </div>
+  </div>
+</main>

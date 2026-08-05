@@ -1,0 +1,99 @@
+<main
+  class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#030609] px-4 py-10 transition-colors"
+>
+  <div class="w-full max-w-md">
+    <!-- logo -->
+    <div class="flex justify-center mb-8">
+      <a routerLink="/">
+        <img src="logo/logo-completa.png" alt="Modular Locadora" class="h-10 w-auto" />
+      </a>
+    </div>
+
+    <div
+      class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-8"
+    >
+      <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">Entrar</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Acesse sua conta para gerenciar suas reservas.
+      </p>
+
+      @if (erro()) {
+        <div
+          class="mt-5 flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-sm px-3 py-2.5"
+        >
+          <i class="ti ti-alert-circle text-base"></i>
+          {{ erro() }}
+        </div>
+      }
+
+      <form (ngSubmit)="entrar()" class="mt-6 flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-gray-700 dark:text-gray-300">E-mail</label>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="seuemail@exemplo.com"
+            class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <div class="flex items-center justify-between">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Senha</label>
+          </div>
+          <div class="relative">
+            <input
+              [type]="mostrarSenha() ? 'text' : 'password'"
+              [(ngModel)]="senha"
+              name="senha"
+              required
+              autocomplete="current-password"
+              placeholder="Sua senha"
+              class="w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 pr-10 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+            />
+            <button
+              type="button"
+              (click)="alternarSenha()"
+              class="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/70"
+              [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+            >
+              <i class="ti" [class.ti-eye]="!mostrarSenha()" [class.ti-eye-off]="mostrarSenha()"></i>
+            </button>
+          </div>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 select-none cursor-pointer">
+          <input
+            type="checkbox"
+            [(ngModel)]="lembrarMe"
+            name="lembrarMe"
+            class="cursor-pointer rounded border-gray-300 dark:border-white/20 text-[#D9603F] focus:ring-[#D9603F]/50"
+          />
+          Lembrar de mim
+        </label>
+
+        <button
+          type="submit"
+          [disabled]="carregando()"
+          class="cursor-pointer mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-[#D9603F] hover:bg-[#C2542F] disabled:opacity-60 disabled:cursor-not-allowed px-5 py-3 text-sm font-semibold text-white transition-colors"
+        >
+          @if (carregando()) {
+            <i class="ti ti-loader-2 animate-spin"></i>
+            Entrando...
+          } @else {
+            <i class="ti ti-login"></i>
+            Entrar
+          }
+        </button>
+      </form>
+    </div>
+
+    <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+      Ainda não tem conta?
+      <a routerLink="/cadastro" class="font-semibold text-[#D9603F] hover:underline">Cadastre-se</a>
+    </p>
+  </div>
+</main>

@@ -1,0 +1,140 @@
+<main
+  class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#030609] px-4 py-10 transition-colors"
+>
+  <div class="w-full max-w-md">
+    <!-- logo -->
+    <div class="flex justify-center mb-8">
+      <a routerLink="/">
+        <img src="logo/logo-completa.png" alt="Modular Locadora" class="h-10 w-auto" />
+      </a>
+    </div>
+
+    <div
+      class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-8"
+    >
+      @if (sucesso()) {
+        <div class="py-6 text-center">
+          <div
+            class="mx-auto w-14 h-14 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center text-2xl"
+          >
+            <i class="ti ti-circle-check"></i>
+          </div>
+          <h1 class="mt-4 text-xl font-extrabold text-gray-900 dark:text-white">Conta criada com sucesso!</h1>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Redirecionando para o login...</p>
+        </div>
+      } @else {
+        <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">Criar conta</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Cadastre-se para começar a alugar com a Modular Locadora.
+        </p>
+
+        @if (erro()) {
+          <div
+            class="mt-5 flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-sm px-3 py-2.5"
+          >
+            <i class="ti ti-alert-circle text-base"></i>
+            {{ erro() }}
+          </div>
+        }
+
+        <form (ngSubmit)="cadastrar()" class="mt-6 flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome completo</label>
+            <input
+              [(ngModel)]="nome"
+              name="nome"
+              required
+              maxlength="80"
+              (keydown)="bloquearEmojiKeydown($event)"
+              placeholder="Seu nome completo"
+              class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">E-mail</label>
+            <input
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              required
+              autocomplete="email"
+              (keydown)="bloquearEmojiKeydown($event)"
+              placeholder="seuemail@exemplo.com"
+              class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Telefone</label>
+            <input
+              [(ngModel)]="telefone"
+              name="telefone"
+              required
+              maxlength="20"
+              placeholder="(00) 00000-0000"
+              class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Senha</label>
+              <div class="relative">
+                <input
+                  [type]="mostrarSenha() ? 'text' : 'password'"
+                  [(ngModel)]="senha"
+                  name="senha"
+                  required
+                  autocomplete="new-password"
+                  placeholder="Mín. 6 caracteres"
+                  class="w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 pr-10 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+                />
+                <button
+                  type="button"
+                  (click)="alternarSenha()"
+                  class="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/70"
+                  [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+                >
+                  <i class="ti" [class.ti-eye]="!mostrarSenha()" [class.ti-eye-off]="mostrarSenha()"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar senha</label>
+              <input
+                [type]="mostrarSenha() ? 'text' : 'password'"
+                [(ngModel)]="confirmarSenha"
+                name="confirmarSenha"
+                required
+                autocomplete="new-password"
+                placeholder="Repita a senha"
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="carregando()"
+            class="cursor-pointer mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-[#D9603F] hover:bg-[#C2542F] disabled:opacity-60 disabled:cursor-not-allowed px-5 py-3 text-sm font-semibold text-white transition-colors"
+          >
+            @if (carregando()) {
+              <i class="ti ti-loader-2 animate-spin"></i>
+              Criando conta...
+            } @else {
+              <i class="ti ti-user-plus"></i>
+              Criar conta
+            }
+          </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+          Já tem conta?
+          <a routerLink="/login" class="font-semibold text-[#D9603F] hover:underline">Entrar</a>
+        </p>
+      }
+    </div>
+  </div>
+</main>

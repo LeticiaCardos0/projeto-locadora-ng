@@ -1,13 +1,19 @@
 <div class="grid grid-rows-[auto_1fr_auto] h-screen overflow-hidden bg-white dark:bg-black">
-  <app-topbar></app-topbar>
+  @if (!telaCheia()) {
+    <app-topbar></app-topbar>
 
-  <div class="grid grid-cols-[auto_1fr] overflow-hidden">
-    <app-sidebar></app-sidebar>
+    <div class="grid grid-cols-[auto_1fr] overflow-hidden">
+      <app-sidebar></app-sidebar>
 
-    <main class="overflow-y-auto p-5">
+      <main class="overflow-y-auto p-5">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+
+    <app-footer></app-footer>
+  } @else {
+    <main class="row-span-3 overflow-y-auto">
       <router-outlet></router-outlet>
     </main>
-  </div>
-
-  <app-footer></app-footer>
+  }
 </div>

@@ -2,15 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { campoPreenchido, contemEmoji, bloquearEmojiKeydown } from '../../../shared/validadores';
+import { Cliente, CLIENTES_KEY, lerClientes, salvarClientes } from '../../../shared/cliente.model';
 
-export interface Cliente {
-  id: string;
-  nome: string;
-  email: string;
-  telefone: string;
-  cpf: string;
-  status: 'ativo' | 'bloqueado';
-}
+export type { Cliente };
 
 interface ReservaResumo {
   id: string;
@@ -20,7 +14,6 @@ interface ReservaResumo {
   status: string;
 }
 
-const STORAGE_KEY = 'clientes';
 const RESERVAS_KEY = 'reservas';
 
 @Component({
@@ -58,21 +51,15 @@ export class ClientesComponent {
   }
 
   private carregar(): void {
-  const raw = localStorage.getItem(STORAGE_KEY);
-
-  console.log("RAW:", raw);
-
-  this.clientes = raw ? JSON.parse(raw) : [];
-
-  console.log("CLIENTES:", this.clientes);
-}
+    this.clientes = lerClientes();
+  }
 
   private recarregar(): void {
     this.carregar();
   }
 
   private salvarNoStorage(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.clientes));
+    salvarClientes(this.clientes);
   }
 
   novo(): void {
@@ -111,10 +98,6 @@ export class ClientesComponent {
     }
     if (!campoPreenchido(this.clienteAtual.telefone)) {
       alert('Informe o telefone do cliente.');
-      return false;
-    }
-    if (!campoPreenchido(this.clienteAtual.cpf)) {
-      alert('Informe o CPF do cliente.');
       return false;
     }
     if (contemEmoji(this.clienteAtual.nome) || contemEmoji(this.clienteAtual.email)) {

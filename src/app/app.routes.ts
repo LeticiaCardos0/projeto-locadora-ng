@@ -8,9 +8,14 @@ import { ManutencoesComponent } from './pages/telas-admin/manutencoes/manutencoe
 import { DashboardComponent } from './pages/telas-admin/dashboard/dashboard';
 import { DashboardFinanceiroComponent } from './pages/telas-admin/financeiro/dashboard-financeiro/dashboard-financeiro';
 import { AdminHomeComponent } from './pages/telas-admin/admin-home/admin-home';
+import { LoginComponent } from './pages/login/login';
+import { CadastroComponent } from './pages/cadastro/cadastro';
+import { RelatoriosComponent } from './pages/telas-admin/relatorios/relatorios';
 
 export const routes: Routes = [
-    { path: '', component: AdminHomeComponent },
+    { path: 'login', component: LoginComponent },
+    { path: 'cadastro', component: CadastroComponent },
+    { path: 'admin', component: AdminHomeComponent },
     { path: 'admin/veiculos', component: VeiculosComponent },
     { path: 'admin/clientes', component: ClientesComponent },
     { path: 'admin/reservas', component: ReservasComponent },
@@ -19,4 +24,6 @@ export const routes: Routes = [
     { path: 'admin/manutencoes', component: ManutencoesComponent },
     { path: 'admin/dashboard', component: DashboardComponent },
     { path: 'admin/financeiro/dashboard', component: DashboardFinanceiroComponent },
+    { path: 'admin/relatorios', component: RelatoriosComponent },
+    
 ];
