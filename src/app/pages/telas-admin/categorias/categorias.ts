@@ -2,12 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { campoPreenchido, contemEmoji, bloquearEmojiKeydown, valorValido } from '../../../shared/validadores';
+import { Categoria, lerCategorias, salvarCategorias } from '../../../shared/categoria.model';
+import { VEICULOS_KEY } from '../../../shared/veiculos.model';
 
-export interface Categoria {
-  id: string;
-  nome: string;
-  valorDiaria: number | null;
-}
+export type { Categoria };
 
 interface VeiculoResumo {
   id: string;
@@ -17,7 +15,6 @@ interface VeiculoResumo {
 }
 
 const STORAGE_KEY = 'categorias';
-const VEICULOS_KEY = 'veiculos';
 
 @Component({
   selector: 'app-categorias',
@@ -51,12 +48,11 @@ export class CategoriasComponent {
   }
 
   private carregar(): void {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    this.categorias = raw ? JSON.parse(raw) : [];
+    this.categorias = lerCategorias();
   }
 
   private salvarNoStorage(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.categorias));
+    salvarCategorias(this.categorias);
   }
 
   // ===== apoio: veículos vinculados (lidos da tela de Veículos, mesma fonte no localStorage) =====

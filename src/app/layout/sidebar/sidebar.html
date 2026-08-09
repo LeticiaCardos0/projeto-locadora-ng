@@ -23,7 +23,7 @@
   </button>
 
   <!-- ÁREA DO CLIENTE -->
-  @if (sidebarMode.mode() === 'cliente') {
+  @if (!isAdmin()) {
     <a
       routerLink="/"
       routerLinkActive
@@ -78,7 +78,7 @@
   }
 
   <!-- ÁREA ADMINISTRATIVA -->
-  @if (sidebarMode.mode() === 'admin') {
+  @if (isAdmin()) {
     <a
       routerLink="/admin/dashboard"
       routerLinkActive
@@ -185,21 +185,5 @@
   }
 
   </nav>
-
-  <!-- BOTÃO DE TROCA DE ÁREA (fixo embaixo) -->
-  <button
-    type="button"
-    (click)="toggleMode()"
-    class="cursor-pointer sticky bottom-0 shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 mt-2 rounded-lg text-sm font-medium text-center text-black dark:text-white border border-black/30 dark:border-white/30 bg-white dark:bg-black hover:bg-black/10 dark:hover:bg-white/20 transition"
-    [title]="collapsed() ? (sidebarMode.mode() === 'cliente' ? 'Painel Admin' : 'Área do Cliente') : ''"
-  >
-    @if (sidebarMode.mode() === 'cliente') {
-      <i class="ti ti-tools text-base"></i>
-      @if (!collapsed()) { <span>Painel Admin</span> }
-    } @else {
-      <i class="ti ti-user text-base"></i>
-      @if (!collapsed()) { <span>Área do Cliente</span> }
-    }
-  </button>
 
 </aside>

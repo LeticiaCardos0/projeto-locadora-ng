@@ -1,0 +1,273 @@
+<main class="p-6 space-y-10">
+  <!-- ===================== HERO ===================== -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#D9603F] to-[#C2542F] px-6 py-12 sm:px-10 sm:py-16 text-center">
+    <i class="ti ti-car absolute -right-6 -bottom-10 text-[220px] text-white/10 pointer-events-none"></i>
+
+    @if (sessao) {
+      <h1 class="relative text-2xl sm:text-4xl font-extrabold text-white">
+        Olá, {{ primeiroNome }}! Pronto(a) para sua próxima viagem?
+      </h1>
+      <p class="relative mt-3 text-sm sm:text-base text-white/85 max-w-xl mx-auto">
+        Confira os veículos disponíveis e reserve em poucos minutos.
+      </p>
+    } @else {
+      <h1 class="relative text-2xl sm:text-4xl font-extrabold text-white">Alugue o carro ideal pra sua próxima viagem</h1>
+      <p class="relative mt-3 text-sm sm:text-base text-white/85 max-w-xl mx-auto">
+        Diárias, planos mensais e uma frota sempre pronta pra te levar mais longe.
+      </p>
+    }
+
+    <a
+      routerLink="/veiculos"
+      class="relative mt-7 inline-flex items-center gap-2 rounded-lg bg-white text-[#D9603F] px-5 py-3 text-sm font-semibold hover:bg-white/90 transition-colors"
+    >
+      <i class="ti ti-car"></i>
+      Ver veículos disponíveis
+    </a>
+  </div>
+
+  <!-- ===================== BUSCA RÁPIDA ===================== -->
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-5 -mt-16 sm:-mt-20 relative z-10 max-w-4xl mx-auto">
+    <p class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Busca rápida</p>
+    <form (ngSubmit)="buscar()" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Retirada</label>
+        <input
+          type="date"
+          [(ngModel)]="dataInicio"
+          name="dataInicio"
+          [min]="hoje"
+          class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Devolução</label>
+        <input
+          type="date"
+          [(ngModel)]="dataFim"
+          name="dataFim"
+          [min]="dataInicio || hoje"
+          class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        />
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Categoria</label>
+        <select
+          [(ngModel)]="categoriaId"
+          name="categoriaId"
+          class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        >
+          <option value="">Todas</option>
+          @for (cat of categorias; track cat.id) {
+            <option [value]="cat.id">{{ cat.nome }}</option>
+          }
+        </select>
+      </div>
+      <div class="flex items-end">
+        <button
+          type="submit"
+          class="cursor-pointer w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#D9603F] hover:bg-[#C2542F] px-4 py-2 text-sm font-semibold text-white transition-colors"
+        >
+          <i class="ti ti-search"></i>
+          Buscar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===================== RESUMO DA CONTA (logado) ===================== -->
+  @if (sessao) {
+    <div>
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Sua conta</h2>
+
+      @if (!proximaReserva && pagamentosPendentes.length === 0) {
+        <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-5 flex items-center justify-between gap-4 flex-wrap">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Você não tem nenhuma reserva ativa no momento.</p>
+          <a routerLink="/veiculos" class="text-sm font-semibold text-[#D9603F] hover:underline shrink-0">
+            Ver veículos disponíveis
+          </a>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          @if (proximaReserva) {
+            <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-5">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center shrink-0">
+                  <i class="ti ti-calendar-check text-sm"></i>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Próxima reserva confirmada</p>
+              </div>
+              <p class="mt-2 text-base font-bold text-gray-900 dark:text-white">{{ proximaReserva.veiculoModelo }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                {{ formatarDataBr(proximaReserva.dataInicio) }} — {{ formatarDataBr(proximaReserva.dataFim) }}
+              </p>
+              <a routerLink="/minhas-reservas" class="mt-3 inline-block text-sm font-semibold text-[#D9603F] hover:underline">
+                Ver detalhes
+              </a>
+            </div>
+          }
+
+          @if (pagamentosPendentes.length > 0) {
+            <div
+              class="rounded-xl border shadow-sm p-5"
+              [ngClass]="temPagamentoAtrasado
+                ? 'border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/5'
+                : 'border-yellow-300 dark:border-yellow-500/20 bg-yellow-50 dark:bg-yellow-500/5'"
+            >
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  [ngClass]="temPagamentoAtrasado ? 'bg-red-500/10 text-red-500' : 'bg-yellow-500/10 text-yellow-600'"
+                >
+                  <i class="ti ti-alert-triangle text-sm"></i>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ temPagamentoAtrasado ? 'Pagamento em atraso' : 'Pagamento pendente' }}
+                </p>
+              </div>
+              <p
+                class="mt-2 text-base font-bold"
+                [ngClass]="temPagamentoAtrasado ? 'text-red-600' : 'text-yellow-700 dark:text-yellow-500'"
+              >
+                {{ formatarValor(totalPendente) }}
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                {{ pagamentosPendentes.length }} {{ pagamentosPendentes.length === 1 ? 'lançamento' : 'lançamentos' }}
+              </p>
+              <a routerLink="/meu-financeiro" class="mt-3 inline-block text-sm font-semibold text-[#D9603F] hover:underline">
+                Ver meu financeiro
+              </a>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ===================== CATEGORIAS EM DESTAQUE ===================== -->
+  <div>
+    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Categorias em destaque</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      @for (cat of categorias; track cat.id) {
+        <button
+          type="button"
+          (click)="irParaVeiculos(cat.id)"
+          class="cursor-pointer text-left rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all p-4"
+        >
+          <div class="w-10 h-10 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center mb-3">
+            <i class="ti" [ngClass]="iconeCategoria(cat.nome)"></i>
+          </div>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ cat.nome }}</p>
+          @if (cat.valorDiaria !== null) {
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              a partir de <span class="font-semibold text-[#D9603F]">R$ {{ cat.valorDiaria | number: '1.2-2' }}</span>/dia
+            </p>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- ===================== VEÍCULOS EM DESTAQUE ===================== -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white">Veículos em destaque</h2>
+      <a routerLink="/veiculos" class="text-sm font-semibold text-[#D9603F] hover:underline">Ver todos</a>
+    </div>
+
+    @if (veiculosDestaque.length === 0) {
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm py-10 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Nenhum veículo disponível no momento.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        @for (v of veiculosDestaque; track v.id) {
+          <button
+            type="button"
+            (click)="irParaVeiculos(v.categoriaId)"
+            class="cursor-pointer text-left group rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden"
+          >
+            <div class="relative aspect-[4/3] bg-gray-50 dark:bg-white/5 flex items-center justify-center overflow-hidden">
+              @if (v.imagemUrl) {
+                <img [src]="v.imagemUrl" [alt]="v.modelo" class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300" />
+              } @else {
+                <i class="ti ti-photo text-3xl text-gray-300 dark:text-white/20"></i>
+              }
+            </div>
+            <div class="p-4">
+              <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ v.modelo }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">{{ categoriaNome(v.categoriaId) }}</p>
+              @if (valorDiaria(v.categoriaId) !== null) {
+                <p class="text-sm font-bold text-[#D9603F] mt-2">
+                  a partir de R$ {{ valorDiaria(v.categoriaId) | number: '1.2-2' }}/dia
+                </p>
+              }
+            </div>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- ===================== COMO FUNCIONA (não logado) ===================== -->
+  @if (!sessao) {
+    <div>
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 text-center">Como funciona</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+        <div class="text-center">
+          <div class="mx-auto w-12 h-12 rounded-full bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center text-lg font-bold mb-3">1</div>
+          <i class="ti ti-car text-xl text-[#D9603F] block mb-1.5"></i>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white">Escolha o carro</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Filtre por categoria, preço e disponibilidade.</p>
+        </div>
+        <div class="text-center">
+          <div class="mx-auto w-12 h-12 rounded-full bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center text-lg font-bold mb-3">2</div>
+          <i class="ti ti-calendar-plus text-xl text-[#D9603F] block mb-1.5"></i>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white">Reserve</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Defina as datas, o local e finalize o pagamento.</p>
+        </div>
+        <div class="text-center">
+          <div class="mx-auto w-12 h-12 rounded-full bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center text-lg font-bold mb-3">3</div>
+          <i class="ti ti-key text-xl text-[#D9603F] block mb-1.5"></i>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white">Retire</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pegue o veículo na unidade escolhida e siga viagem.</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ===================== DIFERENCIAIS ===================== -->
+  <div>
+    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Por que alugar com a gente</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+        <div class="w-10 h-10 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center mb-3">
+          <i class="ti ti-shield-check"></i>
+        </div>
+        <p class="text-sm font-semibold text-gray-900 dark:text-white">Seguro incluso</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Cobertura completa em todas as reservas.</p>
+      </div>
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+        <div class="w-10 h-10 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center mb-3">
+          <i class="ti ti-circle-check"></i>
+        </div>
+        <p class="text-sm font-semibold text-gray-900 dark:text-white">Cancelamento grátis</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Até 24h antes da retirada, sem custo.</p>
+      </div>
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+        <div class="w-10 h-10 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center mb-3">
+          <i class="ti ti-road"></i>
+        </div>
+        <p class="text-sm font-semibold text-gray-900 dark:text-white">Km livre</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rode sem se preocupar com limite de quilometragem.</p>
+      </div>
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+        <div class="w-10 h-10 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center mb-3">
+          <i class="ti ti-headset"></i>
+        </div>
+        <p class="text-sm font-semibold text-gray-900 dark:text-white">Suporte 24h</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Assistência disponível a qualquer hora, todo dia.</p>
+      </div>
+    </div>
+  </div>
+</main>

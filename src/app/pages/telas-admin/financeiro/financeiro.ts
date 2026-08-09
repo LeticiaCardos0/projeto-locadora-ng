@@ -11,25 +11,21 @@ import {
   ANO_MINIMO,
   formatarDataBr,
 } from '../../../shared/validadores';
+import {
+  Lancamento,
+  TipoLancamento,
+  FormaPagamento,
+  lerLancamentos,
+  salvarLancamentos,
+  formatarValor,
+  formaPagamentoLabel,
+  isAtrasado,
+  statusExibido,
+  statusLabel,
+  sincronizarReceitasDeReservas,
+} from '../../../shared/lancamento.model';
 
-export type TipoLancamento = 'receita' | 'despesa';
-export type StatusLancamento = 'pendente' | 'pago' | 'estornado' | 'atrasado';
-export type FormaPagamento = '' | 'pix' | 'cartao' | 'dinheiro' | 'transferencia';
-
-export interface Lancamento {
-  id: string;
-  tipo: TipoLancamento;
-  descricao: string;
-  valor: number;
-  formaPagamento: FormaPagamento;
-  status: StatusLancamento;
-  dataVencimento: string;
-  dataPagamento: string; // vazio se ainda não pago
-  categoriaDespesa?: string; // categorização livre: categoria da despesa ou origem do recebimento manual
-  reservaId?: string; // só para receitas geradas a partir de reservas
-  clienteNome?: string;
-  veiculoModelo?: string;
-}
+export type { Lancamento, TipoLancamento, FormaPagamento };
 
 interface ReservaResumo {
   id: string;
@@ -53,7 +49,6 @@ interface CategoriaResumo {
   valorDiaria: number | null;
 }
 
-const FINANCEIRO_KEY = 'financeiro';
 const RESERVAS_KEY = 'reservas';
 const VEICULOS_KEY = 'veiculos';
 const CATEGORIAS_KEY = 'categorias';
@@ -82,9 +77,14 @@ export class FinanceiroComponent {
   dataMinima = DATA_MINIMA;
   formatarDataBr = formatarDataBr;
   bloquearEmojiKeydown = bloquearEmojiKeydown;
+  formatarValor = formatarValor;
+  formaPagamentoLabel = formaPagamentoLabel;
+  isAtrasado = isAtrasado;
+  statusExibido = statusExibido;
+  statusLabel = statusLabel;
 
   constructor() {
-    this.sincronizarReceitasDeReservas();
+    sincronizarReceitasDeReservas();
     this.carregar();
     this.categorias = this.lerStorage<CategoriaResumo[]>(CATEGORIAS_KEY, []);
   }
@@ -109,107 +109,11 @@ export class FinanceiroComponent {
   }
 
   private carregar(): void {
-    this.lancamentos = this.lerStorage<Lancamento[]>(FINANCEIRO_KEY, []);
+    this.lancamentos = lerLancamentos();
   }
 
   private salvarNoStorage(): void {
-    localStorage.setItem(FINANCEIRO_KEY, JSON.stringify(this.lancamentos));
-  }
-
-  // ===== sincronização automática: 1 receita por reserva não cancelada =====
-
-  private diasEntre(inicio: string, fim: string): number {
-    if (!inicio || !fim) return 1;
-    const ms = new Date(fim).getTime() - new Date(inicio).getTime();
-    const dias = Math.round(ms / (1000 * 60 * 60 * 24));
-    return dias > 0 ? dias : 1;
-  }
-
-  private sincronizarReceitasDeReservas(): void {
-    const reservas = this.lerStorage<ReservaResumo[]>(RESERVAS_KEY, []);
-    const veiculos = this.lerStorage<VeiculoResumo[]>(VEICULOS_KEY, []);
-    const categorias = this.lerStorage<CategoriaResumo[]>(CATEGORIAS_KEY, []);
-    const lancamentos = this.lerStorage<Lancamento[]>(FINANCEIRO_KEY, []);
-
-    let alterou = false;
-
-    for (const reserva of reservas) {
-      const existente = lancamentos.find((l) => l.reservaId === reserva.id);
-
-      // reserva cancelada: estorna a receita gerada (se ainda não tinha sido paga manualmente)
-      if (reserva.status === 'cancelada') {
-        if (existente && existente.status !== 'estornado') {
-          existente.status = 'estornado';
-          alterou = true;
-        }
-        continue;
-      }
-
-      if (existente) continue; // já existe lançamento pra essa reserva, não duplica
-
-      const veiculo = veiculos.find((v) => v.id === reserva.veiculoId);
-      const categoria = categorias.find((c) => c.id === veiculo?.categoriaId);
-      const diaria = categoria?.valorDiaria ?? 0;
-      const dias = this.diasEntre(reserva.dataInicio, reserva.dataFim);
-
-      lancamentos.push({
-        id: 'rec-' + reserva.id,
-        tipo: 'receita',
-        descricao: `Aluguel - ${reserva.veiculoModelo}`,
-        valor: diaria * dias,
-        formaPagamento: '',
-        status: 'pendente',
-        dataVencimento: reserva.dataFim,
-        dataPagamento: '',
-        reservaId: reserva.id,
-        clienteNome: reserva.clienteNome,
-        veiculoModelo: reserva.veiculoModelo,
-      });
-      alterou = true;
-    }
-
-    if (alterou) {
-      localStorage.setItem(FINANCEIRO_KEY, JSON.stringify(lancamentos));
-    }
-  }
-
-  // ===== helpers de exibição =====
-
-  formatarValor(valor: number | null | undefined): string {
-    if (valor === null || valor === undefined || isNaN(valor)) return '-';
-    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  }
-
-  formaPagamentoLabel(forma: FormaPagamento): string {
-    const labels: Record<FormaPagamento, string> = {
-      '': '-',
-      pix: 'Pix',
-      cartao: 'Cartão',
-      dinheiro: 'Dinheiro',
-      transferencia: 'Transferência',
-    };
-    return labels[forma];
-  }
-
-  isAtrasado(l: Lancamento): boolean {
-    if (l.status === 'atrasado') return true;
-    if (l.status !== 'pendente' || !l.dataVencimento) return false;
-    const hoje = new Date().toISOString().slice(0, 10);
-    return l.dataVencimento < hoje;
-  }
-
-  statusExibido(l: Lancamento): 'pendente' | 'pago' | 'estornado' | 'atrasado' {
-    if (this.isAtrasado(l)) return 'atrasado';
-    return l.status;
-  }
-
-  // rótulo do status adaptado ao tipo: receita usa "Recebido", despesa usa "Pago"
-  statusLabel(l: Lancamento): string {
-    const status = this.statusExibido(l);
-    if (status === 'pendente') return 'Pendente';
-    if (status === 'atrasado') return 'Em atraso';
-    if (status === 'estornado') return 'Estornado';
-    return l.tipo === 'receita' ? 'Recebido' : 'Pago';
+    salvarLancamentos(this.lancamentos);
   }
 
   // ===== filtros aplicados =====

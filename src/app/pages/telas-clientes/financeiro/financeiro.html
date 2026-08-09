@@ -1,0 +1,384 @@
+<main class="p-6 space-y-6">
+  <!-- ===================== CABEÇALHO ===================== -->
+  <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Meu Financeiro</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Acompanhe seus pagamentos, faturas e vencimentos.</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Período</label>
+        <select
+          [(ngModel)]="periodo"
+          name="periodo"
+          class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        >
+          <option value="mes-atual">Mês atual</option>
+          <option value="3-meses">Últimos 3 meses</option>
+          <option value="6-meses">Últimos 6 meses</option>
+          <option value="ano">Este ano</option>
+          <option value="personalizado">Personalizado</option>
+        </select>
+      </div>
+
+      @if (periodo === 'personalizado') {
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-gray-500 dark:text-gray-400">De</label>
+          <input
+            type="date"
+            [(ngModel)]="personalizadoDe"
+            name="personalizadoDe"
+            class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+          />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Até</label>
+          <input
+            type="date"
+            [(ngModel)]="personalizadoAte"
+            name="personalizadoAte"
+            class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+          />
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (carregando()) {
+    <!-- ===================== SKELETON: CARDS ===================== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4 animate-pulse">
+          <div class="h-3 w-24 rounded bg-gray-200 dark:bg-white/10"></div>
+          <div class="h-6 w-32 rounded bg-gray-200 dark:bg-white/10 mt-3"></div>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- ===================== CARDS DE RESUMO ===================== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- total pago -->
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
+            <i class="ti ti-circle-check text-sm"></i>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Total pago</p>
+        </div>
+        <p class="text-xl font-extrabold text-green-500 mt-2">{{ formatarValor(totalPago) }}</p>
+      </div>
+
+      <!-- total pendente -->
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-600 flex items-center justify-center shrink-0">
+            <i class="ti ti-clock text-sm"></i>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Total pendente</p>
+        </div>
+        <p class="text-xl font-extrabold text-yellow-600 mt-2">{{ formatarValor(totalPendente) }}</p>
+      </div>
+
+      <!-- próximo vencimento -->
+      <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center shrink-0">
+            <i class="ti ti-calendar-due text-sm"></i>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Próximo vencimento</p>
+        </div>
+        @if (proximoVencimento; as prox) {
+          <p class="text-xl font-extrabold text-gray-900 dark:text-white mt-2">{{ formatarValor(prox.valor) }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">vence em {{ formatarDataBr(prox.dataVencimento) }}</p>
+        } @else {
+          <p class="text-sm text-gray-400 dark:text-white/40 mt-2">Nenhum vencimento por vir</p>
+        }
+      </div>
+
+      <!-- pagamentos atrasados -->
+      <div
+        class="rounded-xl border shadow-sm p-4"
+        [ngClass]="atrasados.length > 0
+          ? 'border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/5'
+          : 'border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f]'"
+      >
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
+            <i class="ti ti-alert-triangle text-sm"></i>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Pagamentos atrasados</p>
+        </div>
+        <p class="text-xl font-extrabold text-red-500 mt-2">{{ formatarValor(totalAtrasado) }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+          {{ atrasados.length }} {{ atrasados.length === 1 ? 'pagamento' : 'pagamentos' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- ===================== ALERTA ===================== -->
+    @if (atrasados.length > 0) {
+      <div class="rounded-xl border border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="flex items-start gap-3 flex-1">
+          <i class="ti ti-alert-triangle text-xl text-red-500 shrink-0 mt-0.5"></i>
+          <div>
+            <p class="text-sm font-semibold text-red-700 dark:text-red-400">Você possui pagamentos em atraso.</p>
+            <p class="text-xs text-red-600/80 dark:text-red-400/70 mt-0.5">
+              {{ atrasados.length }} {{ atrasados.length === 1 ? 'pagamento' : 'pagamentos' }} em atraso, totalizando
+              {{ formatarValor(totalAtrasado) }}.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          (click)="pagarAgora()"
+          class="cursor-pointer shrink-0 inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+        >
+          <i class="ti ti-credit-card-pay"></i>
+          Pagar agora
+        </button>
+      </div>
+    } @else {
+      <div class="rounded-xl border border-green-300 dark:border-green-500/20 bg-green-50 dark:bg-green-500/10 px-5 py-4 flex items-center gap-3">
+        <i class="ti ti-circle-check text-xl text-green-600 shrink-0"></i>
+        <p class="text-sm font-semibold text-green-700 dark:text-green-400">Tudo certo! Você não possui pagamentos atrasados.</p>
+      </div>
+    }
+
+    <!-- ===================== FILTROS ===================== -->
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm px-5 py-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Status</label>
+          <select
+            [(ngModel)]="filtroStatus"
+            name="filtroStatus"
+            class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+          >
+            <option value="">Todos</option>
+            <option value="pago">Pago</option>
+            <option value="pendente">Pendente</option>
+            <option value="atrasado">Atrasado</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Forma de pagamento</label>
+          <select
+            [(ngModel)]="filtroForma"
+            name="filtroForma"
+            class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+          >
+            <option value="">Todas</option>
+            <option value="pix">Pix</option>
+            <option value="cartao">Cartão de crédito</option>
+            <option value="boleto">Boleto</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Reserva</label>
+          <select
+            [(ngModel)]="filtroReservaId"
+            name="filtroReservaId"
+            class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+          >
+            <option value="">Todas</option>
+            @for (r of reservasDisponiveis; track r.id) {
+              <option [value]="r.id">{{ r.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex items-end">
+          <button
+            type="button"
+            (click)="limparFiltros()"
+            class="cursor-pointer inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-[#D9603F] transition-colors"
+          >
+            <i class="ti ti-filter-x"></i>
+            Limpar filtros
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ===================== HISTÓRICO DE PAGAMENTOS ===================== -->
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+      <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+        <i class="ti ti-receipt text-[#D9603F]"></i>
+        Histórico de pagamentos
+      </h2>
+    </div>
+
+    @if (carregando()) {
+      <!-- ===================== SKELETON: TABELA ===================== -->
+      <div class="p-5 space-y-3">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="h-12 rounded-lg bg-gray-100 dark:bg-white/5 animate-pulse"></div>
+        }
+      </div>
+    } @else if (lancamentos.length === 0) {
+      <div class="py-16 text-center">
+        <i class="ti ti-receipt-off text-3xl text-gray-300 dark:text-white/20 block mb-3"></i>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          Nenhum lançamento financeiro encontrado para o período selecionado.
+        </p>
+      </div>
+    } @else if (lancamentosFiltrados.length === 0) {
+      <div class="py-16 text-center">
+        <i class="ti ti-filter-off text-3xl text-gray-300 dark:text-white/20 block mb-3"></i>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Nenhum lançamento corresponde aos filtros selecionados.</p>
+      </div>
+    } @else {
+      <!-- tabela (telas médias e maiores) -->
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-center text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-white/5">
+              <th class="px-5 py-3 font-medium">Descrição</th>
+              <th class="px-5 py-3 font-medium">Reserva</th>
+              <th class="px-5 py-3 font-medium">Valor</th>
+              <th class="px-5 py-3 font-medium">Vencimento</th>
+              <th class="px-5 py-3 font-medium">Pagamento</th>
+              <th class="px-5 py-3 font-medium">Forma</th>
+              <th class="px-5 py-3 font-medium">Status</th>
+              <th class="px-5 py-3 font-medium">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of lancamentosFiltrados; track l.id) {
+              <tr class="text-center border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                <td class="px-5 py-3 text-left text-gray-900 dark:text-white font-medium">{{ l.descricao }}</td>
+                <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
+                  {{ l.reservaId ? '#' + l.reservaId.slice(-6) : '-' }}
+                </td>
+                <td class="px-5 py-3 text-gray-700 dark:text-gray-300 font-medium">{{ formatarValor(l.valor) }}</td>
+                <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ formatarDataBr(l.dataVencimento) }}</td>
+                <td class="px-5 py-3 text-gray-700 dark:text-gray-300">
+                  {{ l.dataPagamento ? formatarDataBr(l.dataPagamento) : '-' }}
+                </td>
+                <td class="px-5 py-3 text-gray-700 dark:text-gray-300">{{ formaPagamentoLabel(l.formaPagamento) }}</td>
+                <td class="px-5 py-3">
+                  <span
+                    class="inline-flex items-center justify-center min-w-[72px] rounded-full px-2.5 py-1 text-xs font-medium"
+                    [ngClass]="statusBadgeClasses(statusExibido(l))"
+                  >
+                    {{ statusLabelCliente(l) }}
+                  </span>
+                </td>
+                <td class="px-5 py-3">
+                  @if (statusExibido(l) === 'pago') {
+                    <button
+                      type="button"
+                      (click)="baixarComprovante(l)"
+                      class="cursor-pointer inline-flex items-center gap-1.5 rounded-md border border-gray-300 dark:border-white/10 px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                    >
+                      @if (comprovanteBaixadoId() === l.id) {
+                        <i class="ti ti-check text-green-500"></i>
+                        Baixado
+                      } @else {
+                        <i class="ti ti-download"></i>
+                        Comprovante
+                      }
+                    </button>
+                  } @else {
+                    <span class="text-xs text-gray-400 dark:text-white/30">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- cards empilhados (telas pequenas) -->
+      <div class="md:hidden divide-y divide-gray-100 dark:divide-white/5">
+        @for (l of lancamentosFiltrados; track l.id) {
+          <div class="p-4 space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ l.descricao }}</p>
+                @if (l.reservaId) {
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Reserva #{{ l.reservaId.slice(-6) }}</p>
+                }
+              </div>
+              <span
+                class="shrink-0 inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-medium"
+                [ngClass]="statusBadgeClasses(statusExibido(l))"
+              >
+                {{ statusLabelCliente(l) }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 dark:text-gray-400">
+              <p>Vencimento: <span class="text-gray-700 dark:text-gray-300">{{ formatarDataBr(l.dataVencimento) }}</span></p>
+              <p>Pagamento: <span class="text-gray-700 dark:text-gray-300">{{ l.dataPagamento ? formatarDataBr(l.dataPagamento) : '-' }}</span></p>
+              <p>Forma: <span class="text-gray-700 dark:text-gray-300">{{ formaPagamentoLabel(l.formaPagamento) }}</span></p>
+              <p class="font-semibold text-[#D9603F]">{{ formatarValor(l.valor) }}</p>
+            </div>
+
+            @if (statusExibido(l) === 'pago') {
+              <button
+                type="button"
+                (click)="baixarComprovante(l)"
+                class="cursor-pointer w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-gray-300 dark:border-white/10 px-2.5 py-2 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+              >
+                @if (comprovanteBaixadoId() === l.id) {
+                  <i class="ti ti-check text-green-500"></i>
+                  Comprovante baixado
+                } @else {
+                  <i class="ti ti-download"></i>
+                  Baixar comprovante
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- ===================== FATURAS E COMPROVANTES ===================== -->
+  @if (!carregando() && comprovantesDisponiveis.length > 0) {
+    <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+        <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+          <i class="ti ti-file-invoice text-[#D9603F]"></i>
+          Faturas e comprovantes
+        </h2>
+      </div>
+
+      <div class="divide-y divide-gray-100 dark:divide-white/5">
+        @for (l of comprovantesDisponiveis; track l.id) {
+          <div class="flex items-center justify-between gap-3 px-5 py-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center shrink-0">
+                <i class="ti ti-file-text text-sm"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ l.descricao }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Pago em {{ formatarDataBr(l.dataPagamento) }} · {{ formatarValor(l.valor) }}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="baixarComprovante(l)"
+              class="cursor-pointer shrink-0 inline-flex items-center gap-1.5 rounded-md border border-gray-300 dark:border-white/10 px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+            >
+              @if (comprovanteBaixadoId() === l.id) {
+                <i class="ti ti-check text-green-500"></i>
+              } @else {
+                <i class="ti ti-download"></i>
+              }
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</main>

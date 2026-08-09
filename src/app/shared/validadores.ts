@@ -1,7 +1,7 @@
 // Utilitários de validação compartilhados entre os CRUDs do painel admin.
 
 /** Ano mínimo aceito em qualquer campo de data do sistema. */
-export const ANO_MINIMO = 2025;
+export const ANO_MINIMO = 2020;
 export const DATA_MINIMA = `${ANO_MINIMO}-01-01`;
 
 /**

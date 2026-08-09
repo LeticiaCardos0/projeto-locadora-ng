@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SidebarModeService } from './sidebar-modo';
+import { Planos } from './planos';
 
-describe('SidebarModeService', () => {
-  let component: SidebarModeService;
-  let fixture: ComponentFixture<SidebarModeService>;
+describe('Planos', () => {
+  let component: Planos;
+  let fixture: ComponentFixture<Planos>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SidebarModeService],
+      imports: [Planos],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SidebarModeService);
+    fixture = TestBed.createComponent(Planos);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,0 +1,265 @@
+<main class="p-6 space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Veículos disponíveis</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400">Escolha o veículo ideal para a sua viagem</p>
+  </div>
+
+  <!-- ===================== FILTROS ===================== -->
+  <div class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <div class="flex flex-col gap-1.5 lg:col-span-2">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Buscar por modelo</label>
+        <div class="relative">
+          <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input
+            [(ngModel)]="busca"
+            name="busca"
+            placeholder="Ex: Onix, Corolla..."
+            class="w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] pl-9 pr-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Categoria</label>
+        <select
+          [(ngModel)]="filtroCategoriaId"
+          name="filtroCategoriaId"
+          class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        >
+          <option value="">Todas</option>
+          @for (cat of categorias; track cat.id) {
+            <option [value]="cat.id">{{ cat.nome }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Combustível</label>
+        <select
+          [(ngModel)]="filtroCombustivel"
+          name="filtroCombustivel"
+          class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        >
+          <option value="">Todos</option>
+          @for (comb of combustivelDisponiveis(); track comb) {
+            <option [value]="comb">{{ comb === 'flex' ? 'Flex' : (comb === 'gasolina' ? 'Gasolina' : comb) }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Até (R$/dia)</label>
+        <input
+          type="number"
+          min="0"
+          [(ngModel)]="precoMax"
+          name="precoMax"
+          placeholder="Sem limite"
+          class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        />
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-white/5">
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Ordenar por</label>
+        <select
+          [(ngModel)]="ordenacao"
+          name="ordenacao"
+          class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-1.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+        >
+          <option value="recentes">Mais recentes</option>
+          <option value="menor-preco">Menor preço</option>
+          <option value="maior-preco">Maior preço</option>
+        </select>
+      </div>
+
+      <button
+        type="button"
+        (click)="limparFiltros()"
+        class="cursor-pointer inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-[#D9603F] transition-colors"
+      >
+        <i class="ti ti-filter-x"></i>
+        Limpar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== GRID DE VEÍCULOS ===================== -->
+  @if (veiculosFiltrados().length === 0) {
+    <div
+      class="rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm py-16 text-center"
+    >
+      <i class="ti ti-car-off text-3xl text-gray-300 dark:text-white/20 block mb-3"></i>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        Nenhum veículo disponível para os filtros selecionados.
+      </p>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      @for (v of veiculosFiltrados(); track v.id) {
+        <button
+          type="button"
+          (click)="abrirDetalhes(v)"
+          class="cursor-pointer text-left group rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden"
+        >
+          <!-- foto -->
+          <div class="relative aspect-[4/3] bg-gray-50 dark:bg-white/5 flex items-center justify-center overflow-hidden">
+            @if (v.imagemUrl) {
+              <img
+                [src]="v.imagemUrl"
+                [alt]="v.modelo"
+                class="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+              />
+            } @else {
+              <i class="ti ti-photo text-3xl text-gray-300 dark:text-white/20"></i>
+            }
+
+            <span
+              class="absolute top-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-emerald-500/90 text-white text-[11px] font-semibold px-2.5 py-1 shadow-sm"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+              Disponível agora
+            </span>
+          </div>
+
+          <!-- info -->
+          <div class="p-4">
+            <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ v.modelo }}</p>
+
+            <div class="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+              <span>{{ v.ano }}</span>
+              <span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-white/20"></span>
+              <span class="truncate">{{ categoriaNome(v.categoriaId) }}</span>
+              <span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-white/20"></span>
+              <span class="inline-flex items-center gap-1">
+                <i class="ti" [ngClass]="iconeCombustivel(v.combustivel)"></i>
+                {{ v.combustivel === 'flex' ? 'Flex' : (v.combustivel === 'gasolina' ? 'Gasolina' : v.combustivel) }}
+              </span>
+            </div>
+
+            <div class="mt-3 flex items-end justify-between">
+              <div>
+                @if (valorDiaria(v.categoriaId) !== null) {
+                  <p class="text-lg font-extrabold text-[#D9603F]">
+                    R$ {{ valorDiaria(v.categoriaId) | number: '1.2-2' }}
+                    <span class="text-xs font-medium text-gray-400 dark:text-white/40">/dia</span>
+                  </p>
+                } @else {
+                  <p class="text-sm text-gray-400 dark:text-white/40">Consulte o valor</p>
+                }
+              </div>
+              <span class="text-xs font-semibold text-[#D9603F] group-hover:underline">Ver detalhes</span>
+            </div>
+          </div>
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ===================== MODAL DE DETALHES ===================== -->
+  @if (veiculoSelecionado) {
+    <div
+      class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      (click)="fecharDetalhes()"
+    >
+      <div
+        class="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+          <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+            <i class="ti ti-car text-[#D9603F]"></i>
+            {{ veiculoSelecionado.modelo }}
+          </h2>
+          <button
+            (click)="fecharDetalhes()"
+            class="cursor-pointer rounded-md p-2 text-gray-400 transition duration-200 hover:rotate-90"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+        <div class="px-5 py-5 space-y-5">
+          <!-- galeria -->
+          <div class="rounded-lg bg-gray-50 dark:bg-white/5 aspect-video flex items-center justify-center overflow-hidden">
+            @if (veiculoSelecionado.imagemUrl) {
+              <img [src]="veiculoSelecionado.imagemUrl" [alt]="veiculoSelecionado.modelo" class="w-full h-full object-contain p-4" />
+            } @else {
+              <i class="ti ti-photo text-4xl text-gray-300 dark:text-white/20"></i>
+            }
+          </div>
+
+          <!-- selo -->
+          <span
+            class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-semibold px-3 py-1"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Disponível agora
+          </span>
+
+          <!-- especificações -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-3 py-2.5">
+              <p class="text-[11px] text-gray-500 dark:text-gray-400">Ano</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ veiculoSelecionado.ano }}</p>
+            </div>
+            <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-3 py-2.5">
+              <p class="text-[11px] text-gray-500 dark:text-gray-400">Categoria</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                {{ categoriaNome(veiculoSelecionado.categoriaId) }}
+              </p>
+            </div>
+            <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-3 py-2.5">
+              <p class="text-[11px] text-gray-500 dark:text-gray-400">Combustível</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                {{ veiculoSelecionado.combustivel === 'flex' ? 'Flex' : (veiculoSelecionado.combustivel === 'gasolina' ? 'Gasolina' : veiculoSelecionado.combustivel) }}
+              </p>
+            </div>
+            <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-3 py-2.5">
+              <p class="text-[11px] text-gray-500 dark:text-gray-400">Placa</p>
+              <p class="text-sm font-semibold text-gray-900 dark:text-white font-mono">
+                {{ mascararPlaca(veiculoSelecionado.placa) }}
+              </p>
+            </div>
+          </div>
+
+          <!-- política de cancelamento -->
+          <div class="rounded-lg border border-gray-200 dark:border-white/10 px-4 py-3">
+            <p class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
+              <i class="ti ti-shield-check text-[#D9603F]"></i>
+              Política de cancelamento
+            </p>
+            <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+              Cancelamento gratuito até 24h antes da retirada. Após esse prazo, será cobrada a diária referente ao
+              primeiro dia da reserva. Alterações de data podem ser feitas sem custo, sujeitas à disponibilidade.
+            </p>
+          </div>
+
+          <!-- valor + cta -->
+          <div class="flex items-center justify-between rounded-lg bg-[#D9603F]/5 px-4 py-3">
+            <div>
+              @if (valorDiaria(veiculoSelecionado.categoriaId) !== null) {
+                <p class="text-xl font-extrabold text-[#D9603F]">
+                  R$ {{ valorDiaria(veiculoSelecionado.categoriaId) | number: '1.2-2' }}
+                  <span class="text-xs font-medium text-gray-400 dark:text-white/40">/dia</span>
+                </p>
+              } @else {
+                <p class="text-sm text-gray-400 dark:text-white/40">Consulte o valor</p>
+              }
+            </div>
+            <button
+              type="button"
+              (click)="reservar(veiculoSelecionado)"
+              class="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-[#D9603F] hover:bg-[#C2542F] px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+            >
+              <i class="ti ti-calendar-plus"></i>
+              Reservar este veículo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</main>

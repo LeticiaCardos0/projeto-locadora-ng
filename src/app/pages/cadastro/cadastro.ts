@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { campoPreenchido, contemEmoji, bloquearEmojiKeydown } from '../../shared/validadores';
 import { Cliente, lerClientes, salvarClientes } from '../../shared/cliente.model';
 
@@ -25,7 +25,11 @@ export class CadastroComponent {
 
   bloquearEmojiKeydown = bloquearEmojiKeydown;
 
-  constructor(private router: Router) {}
+  returnUrl: string | null = null;
+
+  constructor(private router: Router, route: ActivatedRoute) {
+    this.returnUrl = route.snapshot.queryParamMap.get('returnUrl');
+  }
 
   alternarSenha(): void {
     this.mostrarSenha.update((v) => !v);
@@ -90,7 +94,8 @@ export class CadastroComponent {
       this.carregando.set(false);
       this.sucesso.set(true);
 
-      setTimeout(() => this.router.navigateByUrl('/login'), 1200);
+      const loginUrl = this.returnUrl ? `/login?returnUrl=${encodeURIComponent(this.returnUrl)}` : '/login';
+      setTimeout(() => this.router.navigateByUrl(loginUrl), 1200);
     }, 400);
   }
 }

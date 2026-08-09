@@ -4,16 +4,7 @@
   </div>
 
   <div class="flex items-center gap-4">
-    <div class="hidden sm:flex items-center gap-2 border border-black/15 dark:border-white/15 rounded-lg px-3 py-2 w-56">
-      <i class="ti ti-search text-black/50 dark:text-white/50 text-sm"></i>
-      <input
-        type="text"
-        placeholder="Faça sua busca"
-        class="cursor-pointer bg-transparent text-sm text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 outline-none w-full"
-      />
-    </div>
-
-    <!-- BOTÃO DE TEMA CLARO/ESCURO -->
+      <!-- BOTÃO DE TEMA CLARO/ESCURO -->
     <button
       type="button"
       (click)="toggleTema()"
@@ -27,20 +18,166 @@
       }
     </button>
 
-    <button
-      type="button"
-      routerLink="/login"
-      class="cursor-pointer bg-black text-white dark:bg-white dark:text-black text-sm font-medium px-4 py-2 rounded-lg hover:opacity-85 transition"
-    >
-      Entrar
-    </button>
+    @if (sessaoCliente.sessao(); as sessao) {
+      <button
+        type="button"
+        (click)="abrirPerfil()"
+        class="cursor-pointer flex items-center gap-2 rounded-full pl-1 pr-3 py-1 border border-black/15 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10 transition"
+      >
+        <span
+          class="w-7 h-7 shrink-0 rounded-full bg-[#D9603F]/15 text-[#D9603F] flex items-center justify-center text-xs font-bold"
+        >
+          {{ sessao.nome.charAt(0) | uppercase }}
+        </span>
+        <span class="hidden sm:inline text-sm font-medium text-black dark:text-white max-w-[140px] truncate">
+          {{ sessao.nome }}
+        </span>
+      </button>
+    } @else {
+      <button
+        type="button"
+        routerLink="/login"
+        class="cursor-pointer bg-black text-white dark:bg-white dark:text-black text-sm font-medium px-4 py-2 rounded-lg hover:opacity-85 transition"
+      >
+        Entrar
+      </button>
 
-    <button
-      type="button"
-      aria-label="Conta"
-      class="cursor-pointer w-9 h-9 rounded-full border border-black/15 dark:border-white/15 flex items-center justify-center text-black dark:text-white"
-    >
-      <i class="ti ti-user text-sm"></i>
-    </button>
+      <button
+        type="button"
+        aria-label="Conta"
+        class="cursor-pointer w-9 h-9 rounded-full border border-black/15 dark:border-white/15 flex items-center justify-center text-black dark:text-white"
+      >
+        <i class="ti ti-user text-sm"></i>
+      </button>
+    }
   </div>
+
+  <!-- ===================== MODAL "MEU PERFIL" ===================== -->
+  @if (mostrarPerfil()) {
+    <div
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      (click)="fecharPerfil()"
+    >
+      <div
+        class="w-full max-w-md rounded-xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+          <h2 class="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+            <i class="ti ti-user-circle text-[#D9603F]"></i>
+            Meu perfil
+          </h2>
+          <button
+            (click)="fecharPerfil()"
+            class="cursor-pointer rounded-md p-2 text-gray-400 transition duration-200 hover:rotate-90"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+        @if (sucesso()) {
+          <div class="px-5 py-10 text-center">
+            <div class="mx-auto w-12 h-12 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center text-xl">
+              <i class="ti ti-circle-check"></i>
+            </div>
+            <p class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">Perfil atualizado com sucesso!</p>
+          </div>
+        } @else {
+          <div class="px-5 py-5 space-y-4">
+            @if (erro()) {
+              <div class="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-sm px-3 py-2.5">
+                <i class="ti ti-alert-circle text-base"></i>
+                {{ erro() }}
+              </div>
+            }
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
+              <input
+                [(ngModel)]="nome"
+                name="nome"
+                maxlength="80"
+                (keydown)="bloquearEmojiKeydown($event)"
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">E-mail</label>
+              <input
+                [value]="sessaoCliente.sessao()?.email"
+                disabled
+                class="rounded-lg border border-gray-300 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400"
+              />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nova senha</label>
+                <div class="relative">
+                  <input
+                    [type]="mostrarSenha() ? 'text' : 'password'"
+                    [(ngModel)]="novaSenha"
+                    name="novaSenha"
+                    autocomplete="new-password"
+                    placeholder="Deixe em branco pra manter"
+                    class="w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 pr-10 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+                  />
+                  <button
+                    type="button"
+                    (click)="alternarSenha()"
+                    class="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/70"
+                  >
+                    <i class="ti" [class.ti-eye]="!mostrarSenha()" [class.ti-eye-off]="mostrarSenha()"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar nova senha</label>
+                <input
+                  [type]="mostrarSenha() ? 'text' : 'password'"
+                  [(ngModel)]="confirmarNovaSenha"
+                  name="confirmarNovaSenha"
+                  autocomplete="new-password"
+                  placeholder="Repita a nova senha"
+                  class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-3 px-5 py-4 border-t border-gray-200 dark:border-white/5">
+            <button
+              type="button"
+              (click)="sair()"
+              class="cursor-pointer inline-flex items-center gap-1.5 text-sm font-medium text-red-500 hover:text-red-600 transition-colors"
+            >
+              <i class="ti ti-logout"></i>
+              Sair
+            </button>
+            <div class="flex items-center gap-3">
+              <button
+                (click)="fecharPerfil()"
+                class="cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                [disabled]="salvando()"
+                (click)="salvarPerfil()"
+                class="cursor-pointer hover:bg-[#C2542F] bg-[#D9603F] disabled:opacity-60 disabled:cursor-not-allowed rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+              >
+                @if (salvando()) {
+                  <i class="ti ti-loader-2 animate-spin"></i>
+                } @else {
+                  Salvar alterações
+                }
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </header>

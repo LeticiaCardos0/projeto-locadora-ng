@@ -93,7 +93,12 @@
 
     <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
       Ainda não tem conta?
-      <a routerLink="/cadastro" class="font-semibold text-[#D9603F] hover:underline">Cadastre-se</a>
+      <a
+        routerLink="/cadastro"
+        [queryParams]="returnUrl ? { returnUrl } : {}"
+        class="font-semibold text-[#D9603F] hover:underline"
+        >Cadastre-se</a
+      >
     </p>
   </div>
 </main>

@@ -55,15 +55,15 @@ export class InfoService {
     if (this.temDados(VEICULOS_KEY)) return;
 
     const veiculos = [
-      { id: 'vei-1', modelo: 'Chevrolet Onix', placa: 'ABC1D23', ano: 2023, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '' },
-      { id: 'vei-2', modelo: 'Volkswagen Polo', placa: 'DEF4G56', ano: 2022, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '' },
-      { id: 'vei-3', modelo: 'Toyota Corolla', placa: 'GHI7J89', ano: 2023, categoriaId: 'cat-2', combustivel: 'flex', status: 'disponivel', imagemUrl: '' },
-      { id: 'vei-4', modelo: 'Honda Civic', placa: 'JKL0M12', ano: 2022, categoriaId: 'cat-2', combustivel: 'gasolina', status: 'alugado', imagemUrl: '' },
-      { id: 'vei-5', modelo: 'Jeep Compass', placa: 'MNO3P45', ano: 2023, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '' },
-      { id: 'vei-6', modelo: 'Hyundai Creta', placa: 'PQR6S78', ano: 2024, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '' },
-      { id: 'vei-7', modelo: 'Fiat Toro', placa: 'STU9V01', ano: 2022, categoriaId: 'cat-4', combustivel: 'flex', status: 'disponivel', imagemUrl: '' },
-      { id: 'vei-8', modelo: 'Ford Ranger', placa: 'VWX2Y34', ano: 2023, categoriaId: 'cat-4', combustivel: 'gasolina', status: 'alugado', imagemUrl: '' },
-      { id: 'vei-9', modelo: 'Ford Mustang', placa: 'YZA5B67', ano: 2024, categoriaId: 'cat-5', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '' },
+      { id: 'vei-1', modelo: 'Chevrolet Onix', placa: 'ABC1D23', ano: 2023, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/7536/model_main_webp_comprar-1-0-mt-pacote-r7a-rgd_9601d0912e.png.webp' },
+      { id: 'vei-2', modelo: 'Volkswagen Polo', placa: 'DEF4G56', ano: 2022, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://gandcars.gr/wp-content/uploads/2024/02/polo.webp' },
+      { id: 'vei-3', modelo: 'Toyota Corolla', placa: 'GHI7J89', ano: 2023, categoriaId: 'cat-2', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/7010/model_main_webp_comprar-xei_072477d683.png.webp' },
+      { id: 'vei-4', modelo: 'Honda Civic', placa: 'JKL0M12', ano: 2022, categoriaId: 'cat-2', combustivel: 'gasolina', status: 'alugado', imagemUrl: 'https://di-uploads-pod16.dealerinspire.com/pattypeckhonda/uploads/2021/10/2022-Civic-Hatchback-Sport-Touring-Trim.png' },
+      { id: 'vei-5', modelo: 'Jeep Compass', placa: 'MNO3P45', ano: 2023, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/8183/model_main_webp_comprar-sport-t270-turbo-flex-at6_ba75718f1a.png.webp' },
+      { id: 'vei-6', modelo: 'Hyundai Creta', placa: 'PQR6S78', ano: 2024, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/9174/comprar-action-1-6-at_8c0bda03d1.png' },
+      { id: 'vei-7', modelo: 'Fiat Toro', placa: 'STU9V01', ano: 2022, categoriaId: 'cat-4', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/6190/comprar-ranch-turbo-diesel-at9_cdc67fb425.png' },
+      { id: 'vei-8', modelo: 'Ford Ranger', placa: 'VWX2Y34', ano: 2023, categoriaId: 'cat-4', combustivel: 'gasolina', status: 'alugado', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/7200/comprar-2-2-diesel-4x2-at_cc692e5486.png' },
+      { id: 'vei-9', modelo: 'Ford Mustang', placa: 'YZA5B67', ano: 2024, categoriaId: 'cat-5', combustivel: 'gasolina', status: 'disponivel', imagemUrl: 'https://www.lorenzoford.com/assets/stock/ColorMatched_01/Transparent/640/cc_2024FOC05_01_640/cc_2024FOC051996964_01_640_YZ.png' },
     ];
     localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculos));
   }

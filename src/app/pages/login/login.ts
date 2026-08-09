@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { campoPreenchido } from '../../shared/validadores';
-import { lerClientes, CLIENTE_LOGADO_KEY, SessaoCliente } from '../../shared/cliente.model';
+import { lerClientes, SessaoCliente } from '../../shared/cliente.model';
+import { SessaoClienteService } from '../../shared/sessao-cliente.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,13 @@ export class LoginComponent {
   erro = signal('');
   carregando = signal(false);
 
-  constructor(private router: Router) {}
+  returnUrl: string | null = null;
+
+  private sessaoClienteService = inject(SessaoClienteService);
+
+  constructor(private router: Router, route: ActivatedRoute) {
+    this.returnUrl = route.snapshot.queryParamMap.get('returnUrl');
+  }
 
   alternarSenha(): void {
     this.mostrarSenha.update((v) => !v);
@@ -55,13 +62,9 @@ export class LoginComponent {
       }
 
       const sessao: SessaoCliente = { id: cliente.id, nome: cliente.nome, email: cliente.email };
-      if (this.lembrarMe) {
-        localStorage.setItem(CLIENTE_LOGADO_KEY, JSON.stringify(sessao));
-      } else {
-        sessionStorage.setItem(CLIENTE_LOGADO_KEY, JSON.stringify(sessao));
-      }
+      this.sessaoClienteService.definir(sessao, this.lembrarMe);
 
-      this.router.navigateByUrl('/admin');
+      this.router.navigateByUrl(this.returnUrl ?? '/planos');
     }, 400);
   }
 }

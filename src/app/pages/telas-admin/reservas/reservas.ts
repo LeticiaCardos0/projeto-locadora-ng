@@ -2,19 +2,9 @@ import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { dataValida, DATA_MINIMA, ANO_MINIMO, formatarDataBr } from '../../../shared/validadores';
+import { Reserva, StatusReserva, lerReservas, salvarReservas, statusLabel } from '../../../shared/reserva.model';
 
-export type StatusReserva = 'pendente' | 'confirmada' | 'em_andamento' | 'finalizada' | 'cancelada';
-
-export interface Reserva {
-  id: string;
-  clienteId: string;
-  clienteNome: string;
-  veiculoId: string;
-  veiculoModelo: string;
-  dataInicio: string;
-  dataFim: string;
-  status: StatusReserva;
-}
+export type { Reserva, StatusReserva };
 
 interface Cliente {
   id: string;
@@ -36,7 +26,6 @@ interface Categoria {
   nome: string;
 }
 
-const RESERVAS_KEY = 'reservas';
 const CLIENTES_KEY = 'clientes';
 const VEICULOS_KEY = 'veiculos';
 const CATEGORIAS_KEY = 'categorias';
@@ -87,7 +76,7 @@ export class ReservasComponent {
   }
 
   private carregarTudo(): void {
-    this.reservas.set(this.lerStorage<Reserva[]>(RESERVAS_KEY, []));
+    this.reservas.set(lerReservas());
     this.clientes = this.lerStorage<Cliente[]>(CLIENTES_KEY, []);
     this.veiculos = this.lerStorage<Veiculo[]>(VEICULOS_KEY, []);
     this.categorias = this.lerStorage<Categoria[]>(CATEGORIAS_KEY, []);
@@ -99,7 +88,7 @@ export class ReservasComponent {
   }
 
   private salvarReservas(): void {
-    localStorage.setItem(RESERVAS_KEY, JSON.stringify(this.reservas()));
+    salvarReservas(this.reservas());
   }
 
   // ===== filtros da tabela =====
@@ -119,16 +108,7 @@ export class ReservasComponent {
     this.filtroDataFim = '';
   }
 
-  statusLabel(status: StatusReserva): string {
-    const labels: Record<StatusReserva, string> = {
-      pendente: 'Pendente',
-      confirmada: 'Confirmada',
-      em_andamento: 'Em andamento',
-      finalizada: 'Finalizada',
-      cancelada: 'Cancelada',
-    };
-    return labels[status];
-  }
+  statusLabel = statusLabel;
 
   // ===== integração com Clientes: ao selecionar, puxa e-mail/telefone automaticamente =====
 

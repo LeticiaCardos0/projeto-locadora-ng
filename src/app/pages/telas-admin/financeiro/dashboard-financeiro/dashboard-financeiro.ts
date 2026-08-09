@@ -1,23 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-type TipoLancamento = 'receita' | 'despesa';
-type StatusLancamento = 'pendente' | 'pago' | 'estornado' | 'atrasado';
-
-interface Lancamento {
-  id: string;
-  tipo: TipoLancamento;
-  descricao: string;
-  valor: number;
-  formaPagamento: string;
-  status: StatusLancamento;
-  dataVencimento: string;
-  dataPagamento: string;
-  categoriaDespesa?: string;
-  reservaId?: string;
-  clienteNome?: string;
-  veiculoModelo?: string;
-}
+import { Lancamento, lerLancamentos, formatarValor, isAtrasado as ehAtrasado } from '../../../../shared/lancamento.model';
 
 interface MesResumo {
   chave: string; // yyyy-mm
@@ -25,8 +8,6 @@ interface MesResumo {
   receita: number;
   despesa: number;
 }
-
-const FINANCEIRO_KEY = 'financeiro';
 
 const MESES_ABREV = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
@@ -38,14 +19,10 @@ const MESES_ABREV = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'se
 })
 export class DashboardFinanceiroComponent {
   lancamentos = signal<Lancamento[]>([]);
+  formatarValor = formatarValor;
 
   constructor() {
-    const raw = localStorage.getItem(FINANCEIRO_KEY);
-    this.lancamentos.set(raw ? JSON.parse(raw) : []);
-  }
-
-  formatarValor(valor: number): string {
-    return (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    this.lancamentos.set(lerLancamentos());
   }
 
   // ===== indicadores gerais =====
@@ -78,17 +55,9 @@ export class DashboardFinanceiroComponent {
     this.qtdRecebimentosPagos() > 0 ? this.totalRecebido() / this.qtdRecebimentosPagos() : 0
   );
 
-  qtdInadimplentes = computed(() =>
-    this.lancamentos().filter((l) => l.tipo === 'receita' && (l.status === 'atrasado' || this.isAtrasado(l)))
-      .length
+  qtdInadimplentes = computed(
+    () => this.lancamentos().filter((l) => l.tipo === 'receita' && ehAtrasado(l)).length
   );
-
-  private isAtrasado(l: Lancamento): boolean {
-    if (l.status === 'atrasado') return true;
-    if (l.status !== 'pendente' || !l.dataVencimento) return false;
-    const hoje = new Date().toISOString().slice(0, 10);
-    return l.dataVencimento < hoje;
-  }
 
   // ===== receita x despesa nos últimos 6 meses (por data de pagamento) =====
 

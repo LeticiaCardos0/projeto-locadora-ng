@@ -132,7 +132,12 @@
 
         <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
           Já tem conta?
-          <a routerLink="/login" class="font-semibold text-[#D9603F] hover:underline">Entrar</a>
+          <a
+            routerLink="/login"
+            [queryParams]="returnUrl ? { returnUrl } : {}"
+            class="font-semibold text-[#D9603F] hover:underline"
+            >Entrar</a
+          >
         </p>
       }
     </div>

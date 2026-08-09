@@ -9,25 +9,10 @@ import {
   valorValido,
   ANO_MINIMO,
 } from '../../../shared/validadores';
+import { Veiculo, lerVeiculos, salvarVeiculos } from '../../../shared/veiculos.model';
+import { Categoria, lerCategorias } from '../../../shared/categoria.model';
 
-export interface Veiculo {
-  id: string;
-  modelo: string;
-  placa: string;
-  ano: number | null;
-  categoriaId: string;
-  combustivel: string;
-  status: 'disponivel' | 'alugado' | 'manutencao';
-  imagemUrl?: string; // base64 da imagem, salvo direto no localStorage
-}
-
-export interface Categoria {
-  id: string;
-  nome: string;
-}
-
-const STORAGE_KEY = 'veiculos';
-const CATEGORIAS_KEY = 'categorias';
+export type { Veiculo, Categoria };
 
 @Component({
   selector: 'app-veiculos',
@@ -52,8 +37,7 @@ export class VeiculosComponent {
   }
 
   private carregarCategorias(): void {
-    const raw = localStorage.getItem(CATEGORIAS_KEY);
-    this.categorias = raw ? JSON.parse(raw) : [];
+    this.categorias = lerCategorias();
   }
 
   private veiculoVazio(): Veiculo {
@@ -70,12 +54,11 @@ export class VeiculosComponent {
   }
 
   private carregar(): void {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    this.veiculos = raw ? JSON.parse(raw) : [];
+    this.veiculos = lerVeiculos();
   }
 
   private salvarNoStorage(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.veiculos));
+    salvarVeiculos(this.veiculos);
   }
 
   novo(): void {

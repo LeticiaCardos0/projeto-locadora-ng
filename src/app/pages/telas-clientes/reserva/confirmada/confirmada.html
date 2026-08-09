@@ -1,0 +1,63 @@
+<main class="p-6 max-w-2xl mx-auto">
+  @if (reserva) {
+    <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-8 text-center">
+      <div class="mx-auto w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center text-3xl">
+        <i class="ti ti-circle-check"></i>
+      </div>
+      <h1 class="mt-5 text-2xl font-extrabold text-gray-900 dark:text-white">Reserva confirmada!</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Enviamos os detalhes para o seu e-mail. Reserva nº {{ reserva.id }}
+      </p>
+
+      <div class="mt-6 grid grid-cols-2 gap-3 text-left">
+        <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-4 py-3">
+          <p class="text-[11px] text-gray-500 dark:text-gray-400">Veículo</p>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ reserva.veiculoModelo }}</p>
+        </div>
+        <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-4 py-3">
+          <p class="text-[11px] text-gray-500 dark:text-gray-400">Plano</p>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ reserva.planoNome }}</p>
+        </div>
+        <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-4 py-3">
+          <p class="text-[11px] text-gray-500 dark:text-gray-400">Retirada</p>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ reserva.dataInicio }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ reserva.localRetirada }}</p>
+        </div>
+        <div class="rounded-lg bg-gray-50 dark:bg-white/5 px-4 py-3">
+          <p class="text-[11px] text-gray-500 dark:text-gray-400">Devolução</p>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ reserva.dataFim }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ reserva.localDevolucao }}</p>
+        </div>
+      </div>
+
+      @if (reserva.valorTotal !== undefined) {
+        <p class="mt-6 text-3xl font-extrabold text-[#D9603F]">R$ {{ reserva.valorTotal | number: '1.2-2' }}</p>
+      }
+
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a
+          routerLink="/minhas-reservas"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#D9603F] hover:bg-[#C2542F] px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+        >
+          <i class="ti ti-calendar-check"></i>
+          Ver minhas reservas
+        </a>
+        <a
+          routerLink="/planos"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-white/10 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 px-5 py-2.5 text-sm font-semibold transition-colors"
+        >
+          <i class="ti ti-home"></i>
+          Voltar para o início
+        </a>
+      </div>
+    </div>
+  } @else {
+    <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-8 text-center">
+      <i class="ti ti-file-off text-3xl text-gray-300 dark:text-white/20 block mb-3"></i>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Não encontramos os detalhes dessa reserva.</p>
+      <a routerLink="/planos" class="mt-4 inline-block text-sm font-semibold text-[#D9603F] hover:underline">
+        Voltar para os planos
+      </a>
+    </div>
+  }
+</main>
