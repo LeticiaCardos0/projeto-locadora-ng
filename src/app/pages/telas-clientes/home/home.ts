@@ -15,11 +15,12 @@ import {
   formatarValor,
   sincronizarReceitasDeReservas,
 } from '../../../shared/lancamento.model';
+import { SelectCustomComponent, OpcaoSelect } from '../../../shared/ui/select-custom/select-custom';
 
 @Component({
   selector: 'app-home-cliente',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SelectCustomComponent],
   templateUrl: './home.html',
 })
 export class HomeClienteComponent {
@@ -89,6 +90,10 @@ export class HomeClienteComponent {
 
   valorDiaria(categoriaId: string): number | null {
     return this.categorias.find((c) => c.id === categoriaId)?.valorDiaria ?? null;
+  }
+
+  get opcoesCategorias(): OpcaoSelect[] {
+    return [{ value: '', label: 'Todas' }, ...this.categorias.map((c) => ({ value: c.id, label: c.nome }))];
   }
 
   iconeCategoria(nome: string): string {

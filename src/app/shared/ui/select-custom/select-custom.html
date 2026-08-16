@@ -1,0 +1,31 @@
+<div class="relative" (keydown.escape)="fechar()">
+  <button
+    type="button"
+    (click)="alternar()"
+    [disabled]="desabilitado()"
+    [class]="triggerClass"
+    class="cursor-pointer w-full flex items-center justify-between gap-2 text-left disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+  >
+    <span class="truncate">{{ labelAtual }}</span>
+    <i class="ti ti-chevron-down text-xs text-gray-400 dark:text-white/40 shrink-0 transition-transform" [class.rotate-180]="aberto()"></i>
+  </button>
+
+  @if (aberto()) {
+    <div
+      class="absolute z-20 mt-1.5 w-full max-h-60 overflow-y-auto rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0a0b0f] shadow-lg py-1"
+    >
+      @for (opcao of options; track opcao.value) {
+        <button
+          type="button"
+          (click)="selecionar(opcao)"
+          class="cursor-pointer w-full text-left px-3 py-2 text-sm truncate transition-colors"
+          [ngClass]="opcao.value === valor()
+            ? 'bg-[#D9603F]/10 text-[#D9603F] font-medium'
+            : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5'"
+        >
+          {{ opcao.label }}
+        </button>
+      }
+    </div>
+  }
+</div>

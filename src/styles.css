@@ -7,12 +7,23 @@
   --font-montserrat: "Montserrat", sans-serif;
 }
 
-/* Ícone do seletor de data: preto no tema claro, branco no tema escuro */
-input[type='date']::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  filter: invert(0);
+/*
+ * `color-scheme` é o que diz ao navegador pra desenhar os controles nativos
+ * (popup do <select>, calendário do <input type="date">, scrollbars) com a
+ * paleta escura. As classes `dark:` do Tailwind não bastam aqui: elas só
+ * mudam propriedades CSS comuns (cor, fundo), enquanto esses popups são
+ * renderizados pelo próprio navegador/SO numa camada separada, que lê o
+ * color-scheme "ambiente" do documento — por isso aplicamos no <html> em
+ * vez de em cada elemento individualmente.
+ */
+html {
+  color-scheme: light;
 }
 
-html.dark input[type='date']::-webkit-calendar-picker-indicator {
-  filter: invert(1);
+html.dark {
+  color-scheme: dark;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
 }
