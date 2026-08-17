@@ -52,21 +52,58 @@ export class InfoService {
       return;
     }
 
-    // Migração leve: quem já tinha categorias salvas de antes do campo `imagemUrl`
-    // existir fica com esse campo faltando pra sempre, já que o seed só roda em
-    // localStorage vazio. Completa só o que falta, sem mexer no que já foi editado.
-    const salvas = this.lerStorage<any[]>(CATEGORIAS_KEY, []);
+    this.migrarImagemUrlFaltante(CATEGORIAS_KEY, categorias);
+  }
+
+  private seedVeiculos(): void {
+    const veiculos = [
+      { id: 'vei-1', modelo: 'Chevrolet Onix', placa: 'ABC1D23', ano: 2023, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/onix.webp' },
+      { id: 'vei-2', modelo: 'Volkswagen Polo', placa: 'DEF4G56', ano: 2022, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/polo.webp' },
+      { id: 'vei-3', modelo: 'Toyota Corolla', placa: 'GHI7J89', ano: 2023, categoriaId: 'cat-2', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/corolla.webp' },
+      { id: 'vei-4', modelo: 'Honda Civic', placa: 'JKL0M12', ano: 2022, categoriaId: 'cat-2', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/Civic.avif' },
+      { id: 'vei-5', modelo: 'Jeep Compass', placa: 'MNO3P45', ano: 2023, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/compas.webp' },
+      { id: 'vei-6', modelo: 'Hyundai Creta', placa: 'PQR6S78', ano: 2024, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/creta.png' },
+      { id: 'vei-7', modelo: 'Fiat Toro', placa: 'STU9V01', ano: 2022, categoriaId: 'cat-4', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/toro.png' },
+      { id: 'vei-8', modelo: 'Ford Ranger', placa: 'VWX2Y34', ano: 2023, categoriaId: 'cat-4', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/ranger.png' },
+      { id: 'vei-9', modelo: 'Ford Mustang', placa: 'YZA5B67', ano: 2024, categoriaId: 'cat-5', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/mustang.webp' },
+    ];
+
+    if (!this.temDados(VEICULOS_KEY)) {
+      localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculos));
+      return;
+    }
+
+    // Mesma lógica de migração leve usada em categorias: quem já tinha veículos
+    // salvos de antes (com as URLs externas antigas, que quebravam por hotlink)
+    // recebe só o imagemUrl atualizado do seed, sem perder edições feitas nos
+    // outros campos (status, placa, etc).
+    this.migrarImagemUrlFaltante(VEICULOS_KEY, veiculos);
+  }
+
+  // Completa o campo imagemUrl em registros salvos que não têm esse campo
+  // (dado antigo) OU que ainda apontam pra uma URL externa (o padrão antigo
+  // usava links de terceiros, que quebravam por proteção contra hotlink).
+  // Não mexe em nenhum outro campo do registro salvo.
+  private migrarImagemUrlFaltante(
+    chave: string,
+    doSeed: { id: string; imagemUrl?: string }[]
+  ): void {
+    const salvos = this.lerStorage<any[]>(chave, []);
     let alterou = false;
-    const atualizadas = salvas.map((salva) => {
-      if (salva.imagemUrl) return salva;
-      const doSeed = categorias.find((c) => c.id === salva.id);
-      if (!doSeed) return salva;
+
+    const atualizados = salvos.map((salvo) => {
+      const precisaAtualizar = !salvo.imagemUrl || /^https?:\/\//.test(salvo.imagemUrl);
+      if (!precisaAtualizar) return salvo;
+
+      const origem = doSeed.find((item) => item.id === salvo.id);
+      if (!origem?.imagemUrl) return salvo;
+
       alterou = true;
-      return { ...salva, imagemUrl: doSeed.imagemUrl };
+      return { ...salvo, imagemUrl: origem.imagemUrl };
     });
 
     if (alterou) {
-      localStorage.setItem(CATEGORIAS_KEY, JSON.stringify(atualizadas));
+      localStorage.setItem(chave, JSON.stringify(atualizados));
     }
   }
 
@@ -100,23 +137,6 @@ export class InfoService {
     }
   }
 
-  private seedVeiculos(): void {
-    if (this.temDados(VEICULOS_KEY)) return;
-
-    const veiculos = [
-      { id: 'vei-1', modelo: 'Chevrolet Onix', placa: 'ABC1D23', ano: 2023, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/onix.webp' },
-      { id: 'vei-2', modelo: 'Volkswagen Polo', placa: 'DEF4G56', ano: 2022, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/polo.webp' },
-      { id: 'vei-3', modelo: 'Toyota Corolla', placa: 'GHI7J89', ano: 2023, categoriaId: 'cat-2', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/corolla.webp' },
-      { id: 'vei-4', modelo: 'Honda Civic', placa: 'JKL0M12', ano: 2022, categoriaId: 'cat-2', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/Civic.avif' },
-      { id: 'vei-5', modelo: 'Jeep Compass', placa: 'MNO3P45', ano: 2023, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/compas.webp' },
-      { id: 'vei-6', modelo: 'Hyundai Creta', placa: 'PQR6S78', ano: 2024, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/creta.png' },
-      { id: 'vei-7', modelo: 'Fiat Toro', placa: 'STU9V01', ano: 2022, categoriaId: 'cat-4', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/toro.png' },
-      { id: 'vei-8', modelo: 'Ford Ranger', placa: 'VWX2Y34', ano: 2023, categoriaId: 'cat-4', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/ranger.png' },
-      { id: 'vei-9', modelo: 'Ford Mustang', placa: 'YZA5B67', ano: 2024, categoriaId: 'cat-5', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/mustang.webp' },
-    ];
-    localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculos));
-  }
-
   private seedManutencoes(): void {
     const MANUTENCOES_KEY = 'manutencoes';
     if (this.temDados(MANUTENCOES_KEY)) return;
@@ -127,5 +147,15 @@ export class InfoService {
       { id: 'man-3', veiculoId: 'vei-9', veiculoModelo: 'Ford Mustang', tipo: 'preventiva', data: '2026-08-05', custo: 420, status: 'agendada' },
     ];
     localStorage.setItem(MANUTENCOES_KEY, JSON.stringify(manutencoes));
+
+    // Sincroniza: a manutenção "man-1" está em andamento, então o veículo
+    // vei-2 (Polo) já nasce marcado como "manutencao" em vez de "disponivel".
+    const raw = localStorage.getItem(VEICULOS_KEY);
+    if (raw) {
+      const veiculosAtualizados = JSON.parse(raw).map((v: any) =>
+        v.id === 'vei-2' ? { ...v, status: 'manutencao' } : v
+      );
+      localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculosAtualizados));
+    }
   }
 }
