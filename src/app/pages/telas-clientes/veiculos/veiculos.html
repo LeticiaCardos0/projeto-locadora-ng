@@ -12,7 +12,8 @@
         <div class="relative">
           <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
           <input
-            [(ngModel)]="busca"
+            [ngModel]="busca"
+            (ngModelChange)="busca = $event; resetarPagina()"
             name="busca"
             placeholder="Ex: Onix, Corolla..."
             class="w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] pl-9 pr-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
@@ -23,7 +24,8 @@
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Categoria</label>
         <select
-          [(ngModel)]="filtroCategoriaId"
+          [ngModel]="filtroCategoriaId"
+          (ngModelChange)="filtroCategoriaId = $event; resetarPagina()"
           name="filtroCategoriaId"
           class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
         >
@@ -37,7 +39,8 @@
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Combustível</label>
         <select
-          [(ngModel)]="filtroCombustivel"
+          [ngModel]="filtroCombustivel"
+          (ngModelChange)="filtroCombustivel = $event; resetarPagina()"
           name="filtroCombustivel"
           class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
         >
@@ -53,7 +56,8 @@
         <input
           type="number"
           min="0"
-          [(ngModel)]="precoMax"
+          [ngModel]="precoMax"
+          (ngModelChange)="precoMax = $event; resetarPagina()"
           name="precoMax"
           placeholder="Sem limite"
           class="rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
@@ -65,7 +69,8 @@
       <div class="flex items-center gap-2">
         <label class="text-xs font-medium text-gray-500 dark:text-gray-400">Ordenar por</label>
         <select
-          [(ngModel)]="ordenacao"
+          [ngModel]="ordenacao"
+          (ngModelChange)="ordenacao = $event; resetarPagina()"
           name="ordenacao"
           class="cursor-pointer rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-[#030609] px-3 py-1.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D9603F]/50 focus:border-[#D9603F]"
         >
@@ -98,7 +103,7 @@
     </div>
   } @else {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      @for (v of veiculosFiltrados(); track v.id) {
+      @for (v of veiculosPaginados(); track v.id) {
         <button
           type="button"
           (click)="abrirDetalhes(v)"
@@ -156,6 +161,52 @@
         </button>
       }
     </div>
+
+    <!-- ===================== PAGINAÇÃO ===================== -->
+    @if (totalPaginas() > 1) {
+      <div class="flex items-center justify-between pt-2">
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+          Página {{ paginaAtual }} de {{ totalPaginas() }}
+        </p>
+
+        <div class="flex items-center gap-1.5">
+          <button
+            type="button"
+            (click)="paginaAnterior()"
+            [disabled]="paginaAtual === 1"
+            class="cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-300 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:border-[#D9603F] hover:text-[#D9603F] transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-500"
+          >
+            <i class="ti ti-chevron-left text-sm"></i>
+          </button>
+
+          @for (p of paginasVisiveis(); track $index) {
+            @if (p === -1) {
+              <span class="w-8 h-8 inline-flex items-center justify-center text-xs text-gray-400 dark:text-white/30">…</span>
+            } @else {
+              <button
+                type="button"
+                (click)="irParaPagina(p)"
+                class="cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-lg text-xs font-semibold transition-colors"
+                [ngClass]="p === paginaAtual
+                  ? 'bg-[#D9603F] text-white'
+                  : 'border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-[#D9603F] hover:text-[#D9603F]'"
+              >
+                {{ p }}
+              </button>
+            }
+          }
+
+          <button
+            type="button"
+            (click)="proximaPagina()"
+            [disabled]="paginaAtual === totalPaginas()"
+            class="cursor-pointer inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-300 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:border-[#D9603F] hover:text-[#D9603F] transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-500"
+          >
+            <i class="ti ti-chevron-right text-sm"></i>
+          </button>
+        </div>
+      </div>
+    }
   }
 
   <!-- ===================== MODAL DE DETALHES ===================== -->

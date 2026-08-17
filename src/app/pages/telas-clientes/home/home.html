@@ -4,41 +4,38 @@
   <section class="relative mx-4 sm:mx-6 rounded-3xl bg-[#111014] px-6 pt-14 pb-28 sm:px-10 sm:pt-20 sm:pb-36">
     <!-- camada de fundo (imagem + gradiente + brilho), isolada com overflow-hidden pra não cortar o que fica por cima nem o arredondamento -->
     <div class="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
-      <div
-        class="absolute inset-0 bg-cover bg-center opacity-40"
-        style="background-image: url('logo/fundo-home.png');"
-      ></div>
+      <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('logo/fundo-home.png');">
+      </div>
       <div class="absolute inset-0 bg-gradient-to-b from-[#111014]/40 via-[#111014]/80 to-[#111014]"></div>
       <div class="absolute -right-24 -top-24 w-[520px] h-[520px] rounded-full bg-[#D9603F]/20 blur-3xl"></div>
     </div>
 
     <div class="relative max-w-3xl">
-      <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
+      <span
+        class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
         <span class="w-1.5 h-1.5 rounded-full bg-[#D9603F]"></span>
         Frota disponível agora
       </span>
 
       @if (sessao) {
-        <h1 class="font-serif mt-6 text-4xl sm:text-6xl leading-[1.05] text-white">
-          Olá, {{ primeiroNome }}.<br />
-          <span class="text-white/50">Sua próxima viagem começa aqui.</span>
-        </h1>
-        <p class="mt-5 text-sm sm:text-base text-white/60 max-w-md">
-          Confira os veículos disponíveis e reserve em poucos minutos.
-        </p>
+      <h1 class="font-serif mt-6 text-4xl sm:text-6xl leading-[1.05] text-white">
+        Olá, {{ primeiroNome }}.<br />
+        <span class="text-white/50">Sua próxima viagem começa aqui.</span>
+      </h1>
+      <p class="mt-5 text-sm sm:text-base text-white/60 max-w-md">
+        Confira os veículos disponíveis e reserve em poucos minutos.
+      </p>
       } @else {
-        <h1 class="font-serif mt-6 text-4xl sm:text-6xl leading-[1.05] text-white">
-          O novo padrão<br />de movimento.
-        </h1>
-        <p class="mt-5 text-sm sm:text-base text-white/60 max-w-md">
-          Diárias, planos mensais e uma frota sempre pronta pra te levar mais longe.
-        </p>
+      <h1 class="font-serif mt-6 text-4xl sm:text-6xl leading-[1.05] text-white">
+        O novo padrão<br />de movimento.
+      </h1>
+      <p class="mt-5 text-sm sm:text-base text-white/60 max-w-md">
+        Diárias, planos mensais e uma frota sempre pronta pra te levar mais longe.
+      </p>
       }
 
-      <a
-        routerLink="/veiculos"
-        class="mt-8 inline-flex items-center gap-2 rounded-full bg-[#D9603F] hover:bg-[#C2542F] px-6 py-3 text-sm font-semibold text-white transition-colors"
-      >
+      <a routerLink="/veiculos"
+        class="mt-8 inline-flex items-center gap-2 rounded-full bg-[#D9603F] hover:bg-[#C2542F] px-6 py-3 text-sm font-semibold text-white transition-colors">
         Ver veículos disponíveis
         <i class="ti ti-arrow-right text-base"></i>
       </a>
@@ -51,40 +48,26 @@
     <div class="w-full rounded-2xl bg-white dark:bg-[#0a0b0f] shadow-2xl shadow-black/30 p-5 sm:p-6 max-w-5xl mx-auto">
       <form (ngSubmit)="buscar()" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
         <div class="flex flex-col gap-1.5 sm:border-r sm:border-gray-200 sm:dark:border-white/10 sm:pr-4">
-          <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Retirada</label>
-          <input
-            type="date"
-            [(ngModel)]="dataInicio"
-            name="dataInicio"
-            [min]="hoje"
-            class="bg-transparent text-sm text-gray-900 dark:text-white focus:outline-none"
-          />
+          <label
+            class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Retirada</label>
+          <input type="date" [(ngModel)]="dataInicio" name="dataInicio" [min]="hoje"
+            class="bg-transparent text-sm text-gray-900 dark:text-white focus:outline-none" />
         </div>
         <div class="flex flex-col gap-1.5 sm:border-r sm:border-gray-200 sm:dark:border-white/10 sm:pr-4">
-          <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Devolução</label>
-          <input
-            type="date"
-            [(ngModel)]="dataFim"
-            name="dataFim"
-            [min]="dataInicio || hoje"
-            class="bg-transparent text-sm text-gray-900 dark:text-white focus:outline-none"
-          />
+          <label
+            class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Devolução</label>
+          <input type="date" [(ngModel)]="dataFim" name="dataFim" [min]="dataInicio || hoje"
+            class="bg-transparent text-sm text-gray-900 dark:text-white focus:outline-none" />
         </div>
         <div class="flex flex-col gap-1.5 sm:pr-4">
-          <label class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Categoria</label>
-          <app-select-custom
-            [(ngModel)]="categoriaId"
-            name="categoriaId"
-            [options]="opcoesCategorias"
-            placeholder="Todas"
-            triggerClass="bg-transparent text-sm text-gray-900 dark:text-white"
-          ></app-select-custom>
+          <label
+            class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Categoria</label>
+          <app-select-custom [(ngModel)]="categoriaId" name="categoriaId" [options]="opcoesCategorias"
+            placeholder="Todas" triggerClass="bg-transparent text-sm text-gray-900 dark:text-white"></app-select-custom>
         </div>
         <div class="flex items-center">
-          <button
-            type="submit"
-            class="cursor-pointer w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#D9603F] hover:bg-[#C2542F] px-5 py-3 text-sm font-semibold text-white transition-colors"
-          >
+          <button type="submit"
+            class="cursor-pointer w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#D9603F] hover:bg-[#C2542F] px-5 py-3 text-sm font-semibold text-white transition-colors">
             <i class="ti ti-search"></i>
             Buscar frota
           </button>
@@ -97,72 +80,68 @@
 
     <!-- ===================== RESUMO DA CONTA (logado) ===================== -->
     @if (sessao) {
-      <div>
-        <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D9603F]">Painel</p>
-        <h2 class="font-serif text-2xl text-gray-900 dark:text-white mt-1 mb-5">Sua conta</h2>
+    <div>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D9603F]">Painel</p>
+      <h2 class="font-serif text-2xl text-gray-900 dark:text-white mt-1 mb-5">Sua conta</h2>
 
-        @if (!proximaReserva && pagamentosPendentes.length === 0) {
-          <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-6 flex items-center justify-between gap-4 flex-wrap">
-            <p class="text-sm text-gray-500 dark:text-gray-400">Você não tem nenhuma reserva ativa no momento.</p>
-            <a routerLink="/veiculos" class="text-sm font-semibold text-[#D9603F] hover:underline shrink-0">
-              Ver veículos disponíveis
-            </a>
+      @if (!proximaReserva && pagamentosPendentes.length === 0) {
+      <div
+        class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-6 flex items-center justify-between gap-4 flex-wrap">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Você não tem nenhuma reserva ativa no momento.</p>
+        <a routerLink="/veiculos" class="text-sm font-semibold text-[#D9603F] hover:underline shrink-0">
+          Ver veículos disponíveis
+        </a>
+      </div>
+      } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        @if (proximaReserva) {
+        <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-6">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center shrink-0">
+              <i class="ti ti-calendar-check text-sm"></i>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Próxima reserva confirmada</p>
           </div>
-        } @else {
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            @if (proximaReserva) {
-              <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm p-6">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-lg bg-[#D9603F]/10 text-[#D9603F] flex items-center justify-center shrink-0">
-                    <i class="ti ti-calendar-check text-sm"></i>
-                  </div>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Próxima reserva confirmada</p>
-                </div>
-                <p class="font-serif mt-3 text-xl text-gray-900 dark:text-white">{{ proximaReserva.veiculoModelo }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ formatarDataBr(proximaReserva.dataInicio) }} — {{ formatarDataBr(proximaReserva.dataFim) }}
-                </p>
-                <a routerLink="/minhas-reservas" class="mt-4 inline-block text-sm font-semibold text-[#D9603F] hover:underline">
-                  Ver detalhes
-                </a>
-              </div>
-            }
+          <p class="font-serif mt-3 text-xl text-gray-900 dark:text-white">{{ proximaReserva.veiculoModelo }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ formatarDataBr(proximaReserva.dataInicio) }} — {{ formatarDataBr(proximaReserva.dataFim) }}
+          </p>
+          <a routerLink="/minhas-reservas"
+            class="mt-4 inline-block text-sm font-semibold text-[#D9603F] hover:underline">
+            Ver detalhes
+          </a>
+        </div>
+        }
 
-            @if (pagamentosPendentes.length > 0) {
-              <div
-                class="rounded-2xl border shadow-sm p-6"
-                [ngClass]="temPagamentoAtrasado
+        @if (pagamentosPendentes.length > 0) {
+        <div class="rounded-2xl border shadow-sm p-6" [ngClass]="temPagamentoAtrasado
                   ? 'border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/5'
-                  : 'border-yellow-300 dark:border-yellow-500/20 bg-yellow-50 dark:bg-yellow-500/5'"
-              >
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                    [ngClass]="temPagamentoAtrasado ? 'bg-red-500/10 text-red-500' : 'bg-yellow-500/10 text-yellow-600'"
-                  >
-                    <i class="ti ti-alert-triangle text-sm"></i>
-                  </div>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    {{ temPagamentoAtrasado ? 'Pagamento em atraso' : 'Pagamento pendente' }}
-                  </p>
-                </div>
-                <p
-                  class="font-serif mt-3 text-xl"
-                  [ngClass]="temPagamentoAtrasado ? 'text-red-600' : 'text-yellow-700 dark:text-yellow-500'"
-                >
-                  {{ formatarValor(totalPendente) }}
-                </p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ pagamentosPendentes.length }} {{ pagamentosPendentes.length === 1 ? 'lançamento' : 'lançamentos' }}
-                </p>
-                <a routerLink="/meu-financeiro" class="mt-4 inline-block text-sm font-semibold text-[#D9603F] hover:underline">
-                  Ver meu financeiro
-                </a>
-              </div>
-            }
+                  : 'border-yellow-300 dark:border-yellow-500/20 bg-yellow-50 dark:bg-yellow-500/5'">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+              [ngClass]="temPagamentoAtrasado ? 'bg-red-500/10 text-red-500' : 'bg-yellow-500/10 text-yellow-600'">
+              <i class="ti ti-alert-triangle text-sm"></i>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              {{ temPagamentoAtrasado ? 'Pagamento em atraso' : 'Pagamento pendente' }}
+            </p>
           </div>
+          <p class="font-serif mt-3 text-xl"
+            [ngClass]="temPagamentoAtrasado ? 'text-red-600' : 'text-yellow-700 dark:text-yellow-500'">
+            {{ formatarValor(totalPendente) }}
+          </p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ pagamentosPendentes.length }} {{ pagamentosPendentes.length === 1 ? 'lançamento' : 'lançamentos' }}
+          </p>
+          <a routerLink="/meu-financeiro"
+            class="mt-4 inline-block text-sm font-semibold text-[#D9603F] hover:underline">
+            Ver meu financeiro
+          </a>
+        </div>
         }
       </div>
+      }
+    </div>
     }
 
     <!-- ===================== CATEGORIAS EM DESTAQUE (bento) ===================== -->
@@ -172,7 +151,8 @@
           <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D9603F]">Categorias</p>
           <h2 class="font-serif text-2xl sm:text-3xl text-gray-900 dark:text-white mt-1">Escolha por intenção</h2>
         </div>
-        <a routerLink="/veiculos" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-[#D9603F]">
+        <a routerLink="/veiculos"
+          class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-[#D9603F]">
           Ver todas
           <i class="ti ti-arrow-right text-base"></i>
         </a>
@@ -180,25 +160,23 @@
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         @for (cat of categorias; track cat.id; let i = $index) {
-          <button
-            type="button"
-            (click)="irParaVeiculos(cat.id)"
-            class="cursor-pointer text-left relative overflow-hidden rounded-2xl bg-[#1b1a1e] p-5 flex flex-col justify-end transition-transform hover:-translate-y-1"
-            [class.sm:col-span-2]="i === 0"
-            [class.sm:row-span-2]="i === 0"
-            [class.h-40]="i !== 0"
-            [class.sm:h-full]="i === 0"
-            [class.min-h-[13rem]]="i === 0"
-          >
-            <div class="absolute inset-0 bg-gradient-to-br from-[#D9603F]/25 via-transparent to-black/40"></div>
-            <i class="ti relative text-2xl text-white/80 mb-8" [ngClass]="iconeCategoria(cat.nome)"></i>
-            <p class="relative font-serif text-lg text-white">{{ cat.nome }}</p>
-            @if (cat.valorDiaria !== null) {
-              <p class="relative text-xs text-white/60 mt-1">
-                a partir de <span class="font-semibold text-white">R$ {{ cat.valorDiaria | number: '1.2-2' }}</span>/dia
-              </p>
-            }
-          </button>
+        <button type="button" (click)="irParaVeiculos(cat.id)"
+          class="cursor-pointer text-left relative overflow-hidden rounded-2xl bg-[#1b1a1e] p-5 flex flex-col justify-end transition-transform hover:-translate-y-1 bg-cover bg-center"
+          [style.background-image]="cat.imagemUrl ? 'url(' + cat.imagemUrl + ')' : null" [class.sm:col-span-2]="i === 0"
+          [class.sm:row-span-2]="i === 0" [class.h-40]="i !== 0" [class.sm:h-full]="i === 0"
+          [class.min-h-[13rem]]="i === 0">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          @if (!cat.imagemUrl) {
+          <div class="absolute inset-0 bg-gradient-to-br from-[#D9603F]/25 via-transparent to-black/40"></div>
+          }
+          <i class="ti relative text-2xl text-white/80 mb-8" [ngClass]="iconeCategoria(cat.nome)"></i>
+          <p class="relative font-serif text-lg text-white">{{ cat.nome }}</p>
+          @if (cat.valorDiaria !== null) {
+          <p class="relative text-xs text-white/60 mt-1">
+            a partir de <span class="font-semibold text-white">R$ {{ cat.valorDiaria | number: '1.2-2' }}</span>/dia
+          </p>
+          }
+        </button>
         }
       </div>
     </div>
@@ -210,75 +188,79 @@
           <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D9603F]">Frota</p>
           <h2 class="font-serif text-2xl sm:text-3xl text-gray-900 dark:text-white mt-1">Veículos em destaque</h2>
         </div>
-        <a routerLink="/veiculos" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-[#D9603F]">
+        <a routerLink="/veiculos"
+          class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-[#D9603F]">
           Ver todos
           <i class="ti ti-arrow-right text-base"></i>
         </a>
       </div>
 
       @if (veiculosDestaque.length === 0) {
-        <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm py-14 text-center">
-          <p class="text-sm text-gray-500 dark:text-gray-400">Nenhum veículo disponível no momento.</p>
-        </div>
+      <div
+        class="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm py-14 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Nenhum veículo disponível no momento.</p>
+      </div>
       } @else {
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          @for (v of veiculosDestaque; track v.id) {
-            <button
-              type="button"
-              (click)="irParaVeiculos(v.categoriaId)"
-              class="cursor-pointer text-left group rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden"
-            >
-              <div class="relative aspect-[4/3] bg-[#F1EEE7] dark:bg-white/5 flex items-center justify-center overflow-hidden">
-                @if (v.imagemUrl) {
-                  <img [src]="v.imagemUrl" [alt]="v.modelo" class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" />
-                } @else {
-                  <i class="ti ti-photo text-3xl text-gray-300 dark:text-white/20"></i>
-                }
-              </div>
-              <div class="p-4 border-t border-gray-100 dark:border-white/5">
-                <p class="font-serif text-base text-gray-900 dark:text-white truncate">{{ v.modelo }}</p>
-                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate uppercase tracking-wide">{{ categoriaNome(v.categoriaId) }}</p>
-                @if (valorDiaria(v.categoriaId) !== null) {
-                  <p class="text-sm font-semibold text-[#D9603F] mt-2">
-                    R$ {{ valorDiaria(v.categoriaId) | number: '1.2-2' }} <span class="text-gray-400 dark:text-gray-500 font-normal">/dia</span>
-                  </p>
-                }
-              </div>
-            </button>
-          }
-        </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        @for (v of veiculosDestaque; track v.id) {
+        <button type="button" (click)="irParaVeiculos(v.categoriaId)"
+          class="cursor-pointer text-left group rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#0a0b0f] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden">
+          <div
+            class="relative aspect-[4/3] bg-[#F1EEE7] dark:bg-white/5 flex items-center justify-center overflow-hidden">
+            @if (v.imagemUrl) {
+            <img [src]="v.imagemUrl" [alt]="v.modelo"
+              class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" />
+            } @else {
+            <i class="ti ti-photo text-3xl text-gray-300 dark:text-white/20"></i>
+            }
+          </div>
+          <div class="p-4 border-t border-gray-100 dark:border-white/5">
+            <p class="font-serif text-base text-gray-900 dark:text-white truncate">{{ v.modelo }}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate uppercase tracking-wide">{{
+              categoriaNome(v.categoriaId) }}</p>
+            @if (valorDiaria(v.categoriaId) !== null) {
+            <p class="text-sm font-semibold text-[#D9603F] mt-2">
+              R$ {{ valorDiaria(v.categoriaId) | number: '1.2-2' }} <span
+                class="text-gray-400 dark:text-gray-500 font-normal">/dia</span>
+            </p>
+            }
+          </div>
+        </button>
+        }
+      </div>
       }
     </div>
 
     <!-- ===================== COMO FUNCIONA (não logado) ===================== -->
     @if (!sessao) {
-      <div class="rounded-2xl bg-[#1b1a1e] px-6 py-12 sm:px-12 sm:py-14">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D9603F] text-center">Processo</p>
-        <h2 class="font-serif text-2xl sm:text-3xl text-white mt-1 mb-10 text-center">Como funciona</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div class="text-center">
-            <i class="ti ti-car text-2xl text-[#D9603F] block mb-3"></i>
-            <p class="font-serif text-lg text-white">Escolha o carro</p>
-            <p class="text-sm text-white/50 mt-1.5">Filtre por categoria, preço e disponibilidade.</p>
-          </div>
-          <div class="text-center">
-            <i class="ti ti-calendar-plus text-2xl text-[#D9603F] block mb-3"></i>
-            <p class="font-serif text-lg text-white">Reserve</p>
-            <p class="text-sm text-white/50 mt-1.5">Defina as datas, o local e finalize o pagamento.</p>
-          </div>
-          <div class="text-center">
-            <i class="ti ti-key text-2xl text-[#D9603F] block mb-3"></i>
-            <p class="font-serif text-lg text-white">Retire</p>
-            <p class="text-sm text-white/50 mt-1.5">Pegue o veículo na unidade escolhida e siga viagem.</p>
-          </div>
+    <div class="rounded-2xl bg-[#1b1a1e] px-6 py-12 sm:px-12 sm:py-14">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D9603F] text-center">Processo</p>
+      <h2 class="font-serif text-2xl sm:text-3xl text-white mt-1 mb-10 text-center">Como funciona</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div class="text-center">
+          <i class="ti ti-car text-2xl text-[#D9603F] block mb-3"></i>
+          <p class="font-serif text-lg text-white">Escolha o carro</p>
+          <p class="text-sm text-white/50 mt-1.5">Filtre por categoria, preço e disponibilidade.</p>
+        </div>
+        <div class="text-center">
+          <i class="ti ti-calendar-plus text-2xl text-[#D9603F] block mb-3"></i>
+          <p class="font-serif text-lg text-white">Reserve</p>
+          <p class="text-sm text-white/50 mt-1.5">Defina as datas, o local e finalize o pagamento.</p>
+        </div>
+        <div class="text-center">
+          <i class="ti ti-key text-2xl text-[#D9603F] block mb-3"></i>
+          <p class="font-serif text-lg text-white">Retire</p>
+          <p class="text-sm text-white/50 mt-1.5">Pegue o veículo na unidade escolhida e siga viagem.</p>
         </div>
       </div>
+    </div>
     }
 
     <!-- ===================== DIFERENCIAIS ===================== -->
     <div>
       <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#D9603F]">Vantagens</p>
-      <h2 class="font-serif text-2xl sm:text-3xl text-gray-900 dark:text-white mt-1 mb-6">Por que alugar com a gente</h2>
+      <h2 class="font-serif text-2xl sm:text-3xl text-gray-900 dark:text-white mt-1 mb-6">Por que alugar com a gente
+      </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-[#F1EEE7] dark:bg-white/5 shadow-sm p-5">
           <i class="ti ti-shield-check text-xl text-[#D9603F] block mb-3"></i>
@@ -293,7 +275,8 @@
         <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-[#F1EEE7] dark:bg-white/5 shadow-sm p-5">
           <i class="ti ti-road text-xl text-[#D9603F] block mb-3"></i>
           <p class="font-serif text-base text-gray-900 dark:text-white">Km livre</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rode sem se preocupar com limite de quilometragem.</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rode sem se preocupar com limite de quilometragem.
+          </p>
         </div>
         <div class="rounded-2xl border border-gray-200 dark:border-white/5 bg-[#F1EEE7] dark:bg-white/5 shadow-sm p-5">
           <i class="ti ti-headset text-xl text-[#D9603F] block mb-3"></i>

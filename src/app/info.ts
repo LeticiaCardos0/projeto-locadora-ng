@@ -14,16 +14,65 @@ export class InfoService {
   }
 
   private seedCategorias(): void {
-    if (this.temDados(CATEGORIAS_KEY)) return;
-
     const categorias = [
-      { id: 'cat-1', nome: 'Econômico' },
-      { id: 'cat-2', nome: 'Sedan' },
-      { id: 'cat-3', nome: 'SUV' },
-      { id: 'cat-4', nome: 'Utilitário' },
-      { id: 'cat-5', nome: 'Esportivo' },
+      {
+        id: 'cat-1',
+        nome: 'Econômico',
+        valorDiaria: 90,
+        imagemUrl: '/imagens-categorias/economico.jpeg',
+      },
+      {
+        id: 'cat-2',
+        nome: 'Sedan',
+        valorDiaria: 150,
+        imagemUrl: '/imagens-categorias/sedan.webp',
+      },
+      {
+        id: 'cat-3',
+        nome: 'SUV',
+        valorDiaria: 220,
+        imagemUrl: '/imagens-categorias/suv.jpg',
+      },
+      {
+        id: 'cat-4',
+        nome: 'Utilitário',
+        valorDiaria: 260,
+        imagemUrl: '/imagens-categorias/ultilitario.webp',
+      },
+      {
+        id: 'cat-5',
+        nome: 'Esportivo',
+        valorDiaria: 480,
+        imagemUrl: '/imagens-categorias/esportivo.jpg',
+      },
     ];
-    localStorage.setItem(CATEGORIAS_KEY, JSON.stringify(categorias));
+
+    if (!this.temDados(CATEGORIAS_KEY)) {
+      localStorage.setItem(CATEGORIAS_KEY, JSON.stringify(categorias));
+      return;
+    }
+
+    // Migração leve: quem já tinha categorias salvas de antes do campo `imagemUrl`
+    // existir fica com esse campo faltando pra sempre, já que o seed só roda em
+    // localStorage vazio. Completa só o que falta, sem mexer no que já foi editado.
+    const salvas = this.lerStorage<any[]>(CATEGORIAS_KEY, []);
+    let alterou = false;
+    const atualizadas = salvas.map((salva) => {
+      if (salva.imagemUrl) return salva;
+      const doSeed = categorias.find((c) => c.id === salva.id);
+      if (!doSeed) return salva;
+      alterou = true;
+      return { ...salva, imagemUrl: doSeed.imagemUrl };
+    });
+
+    if (alterou) {
+      localStorage.setItem(CATEGORIAS_KEY, JSON.stringify(atualizadas));
+    }
+  }
+
+  private lerStorage<T>(chave: string, fallback: T): T {
+    const raw = localStorage.getItem(chave);
+    return raw ? JSON.parse(raw) : fallback;
   }
 
   private seedClientes(): void {
@@ -55,15 +104,15 @@ export class InfoService {
     if (this.temDados(VEICULOS_KEY)) return;
 
     const veiculos = [
-      { id: 'vei-1', modelo: 'Chevrolet Onix', placa: 'ABC1D23', ano: 2023, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/7536/model_main_webp_comprar-1-0-mt-pacote-r7a-rgd_9601d0912e.png.webp' },
-      { id: 'vei-2', modelo: 'Volkswagen Polo', placa: 'DEF4G56', ano: 2022, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://gandcars.gr/wp-content/uploads/2024/02/polo.webp' },
-      { id: 'vei-3', modelo: 'Toyota Corolla', placa: 'GHI7J89', ano: 2023, categoriaId: 'cat-2', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/7010/model_main_webp_comprar-xei_072477d683.png.webp' },
-      { id: 'vei-4', modelo: 'Honda Civic', placa: 'JKL0M12', ano: 2022, categoriaId: 'cat-2', combustivel: 'gasolina', status: 'alugado', imagemUrl: 'https://di-uploads-pod16.dealerinspire.com/pattypeckhonda/uploads/2021/10/2022-Civic-Hatchback-Sport-Touring-Trim.png' },
-      { id: 'vei-5', modelo: 'Jeep Compass', placa: 'MNO3P45', ano: 2023, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/8183/model_main_webp_comprar-sport-t270-turbo-flex-at6_ba75718f1a.png.webp' },
-      { id: 'vei-6', modelo: 'Hyundai Creta', placa: 'PQR6S78', ano: 2024, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/9174/comprar-action-1-6-at_8c0bda03d1.png' },
-      { id: 'vei-7', modelo: 'Fiat Toro', placa: 'STU9V01', ano: 2022, categoriaId: 'cat-4', combustivel: 'flex', status: 'disponivel', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/6190/comprar-ranch-turbo-diesel-at9_cdc67fb425.png' },
-      { id: 'vei-8', modelo: 'Ford Ranger', placa: 'VWX2Y34', ano: 2023, categoriaId: 'cat-4', combustivel: 'gasolina', status: 'alugado', imagemUrl: 'https://production.autoforce.com/uploads/version/profile_image/7200/comprar-2-2-diesel-4x2-at_cc692e5486.png' },
-      { id: 'vei-9', modelo: 'Ford Mustang', placa: 'YZA5B67', ano: 2024, categoriaId: 'cat-5', combustivel: 'gasolina', status: 'disponivel', imagemUrl: 'https://www.lorenzoford.com/assets/stock/ColorMatched_01/Transparent/640/cc_2024FOC05_01_640/cc_2024FOC051996964_01_640_YZ.png' },
+      { id: 'vei-1', modelo: 'Chevrolet Onix', placa: 'ABC1D23', ano: 2023, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/onix.webp' },
+      { id: 'vei-2', modelo: 'Volkswagen Polo', placa: 'DEF4G56', ano: 2022, categoriaId: 'cat-1', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/polo.webp' },
+      { id: 'vei-3', modelo: 'Toyota Corolla', placa: 'GHI7J89', ano: 2023, categoriaId: 'cat-2', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/corolla.webp' },
+      { id: 'vei-4', modelo: 'Honda Civic', placa: 'JKL0M12', ano: 2022, categoriaId: 'cat-2', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/Civic.avif' },
+      { id: 'vei-5', modelo: 'Jeep Compass', placa: 'MNO3P45', ano: 2023, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/compas.webp' },
+      { id: 'vei-6', modelo: 'Hyundai Creta', placa: 'PQR6S78', ano: 2024, categoriaId: 'cat-3', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/creta.png' },
+      { id: 'vei-7', modelo: 'Fiat Toro', placa: 'STU9V01', ano: 2022, categoriaId: 'cat-4', combustivel: 'flex', status: 'disponivel', imagemUrl: '/imagens-carros/toro.png' },
+      { id: 'vei-8', modelo: 'Ford Ranger', placa: 'VWX2Y34', ano: 2023, categoriaId: 'cat-4', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/ranger.png' },
+      { id: 'vei-9', modelo: 'Ford Mustang', placa: 'YZA5B67', ano: 2024, categoriaId: 'cat-5', combustivel: 'gasolina', status: 'disponivel', imagemUrl: '/imagens-carros/mustang.webp' },
     ];
     localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculos));
   }
@@ -78,15 +127,5 @@ export class InfoService {
       { id: 'man-3', veiculoId: 'vei-9', veiculoModelo: 'Ford Mustang', tipo: 'preventiva', data: '2026-08-05', custo: 420, status: 'agendada' },
     ];
     localStorage.setItem(MANUTENCOES_KEY, JSON.stringify(manutencoes));
-
-    // Sincroniza: a manutenção "man-1" está em andamento, então o veículo
-    // vei-2 (Polo) já nasce marcado como "manutencao" em vez de "disponivel".
-    const raw = localStorage.getItem(VEICULOS_KEY);
-    if (raw) {
-      const veiculos2 = JSON.parse(raw).map((v: any) =>
-        v.id === 'vei-2' ? { ...v, status: 'manutencao' } : v
-      );
-      localStorage.setItem(VEICULOS_KEY, JSON.stringify(veiculos2));
-    }
   }
 }

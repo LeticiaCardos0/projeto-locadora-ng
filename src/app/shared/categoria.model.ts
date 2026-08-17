@@ -4,6 +4,7 @@ export interface Categoria {
   id: string;
   nome: string;
   valorDiaria: number | null;
+  imagemUrl?: string;
 }
 
 export const CATEGORIAS_KEY = 'categorias';

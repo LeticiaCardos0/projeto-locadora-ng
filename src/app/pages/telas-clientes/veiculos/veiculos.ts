@@ -26,6 +26,10 @@ export class VeiculosClienteComponent {
   precoMax: number | null = null;
   ordenacao: Ordenacao = 'recentes';
 
+  // ===== paginação =====
+  paginaAtual = 1;
+  readonly itensPorPagina = 12;
+
   // ===== tela de detalhes (modal) =====
   veiculoSelecionado: Veiculo | null = null;
 
@@ -102,12 +106,60 @@ export class VeiculosClienteComponent {
     return ordenada;
   }
 
+  veiculosPaginados(): Veiculo[] {
+    const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
+    return this.veiculosFiltrados().slice(inicio, inicio + this.itensPorPagina);
+  }
+
+  totalPaginas(): number {
+    return Math.max(1, Math.ceil(this.veiculosFiltrados().length / this.itensPorPagina));
+  }
+
+  /** Janela de números de página exibida, com -1 representando "...". */
+  paginasVisiveis(): number[] {
+    const total = this.totalPaginas();
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const atual = this.paginaAtual;
+    const paginas = new Set<number>([1, total, atual, atual - 1, atual + 1]);
+    const ordenadas = [...paginas].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+
+    const resultado: number[] = [];
+    for (let i = 0; i < ordenadas.length; i++) {
+      if (i > 0 && ordenadas[i] - ordenadas[i - 1] > 1) {
+        resultado.push(-1);
+      }
+      resultado.push(ordenadas[i]);
+    }
+    return resultado;
+  }
+
+  irParaPagina(pagina: number): void {
+    if (pagina < 1 || pagina > this.totalPaginas()) return;
+    this.paginaAtual = pagina;
+  }
+
+  paginaAnterior(): void {
+    this.irParaPagina(this.paginaAtual - 1);
+  }
+
+  proximaPagina(): void {
+    this.irParaPagina(this.paginaAtual + 1);
+  }
+
+  resetarPagina(): void {
+    this.paginaAtual = 1;
+  }
+
   limparFiltros(): void {
     this.busca = '';
     this.filtroCategoriaId = '';
     this.filtroCombustivel = '';
     this.precoMax = null;
     this.ordenacao = 'recentes';
+    this.resetarPagina();
   }
 
   abrirDetalhes(veiculo: Veiculo): void {
